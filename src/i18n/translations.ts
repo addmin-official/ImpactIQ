@@ -167,6 +167,59 @@ export interface TranslationDictionary {
     theme_light: string;
     theme_toggle: string;
   };
+  landing: {
+    hero_title: string;
+    hero_subtitle: string;
+    hero_desc: string;
+    primary_cta: string;
+    secondary_cta: string;
+    proof_title: string;
+    proof_faster_reporting_title: string;
+    proof_faster_reporting_val: string;
+    proof_faster_reporting_desc: string;
+    proof_cleaner_beneficiary_title: string;
+    proof_cleaner_beneficiary_val: string;
+    proof_cleaner_beneficiary_desc: string;
+    proof_donor_visibility_title: string;
+    proof_donor_visibility_val: string;
+    proof_donor_visibility_desc: string;
+    proof_evidence_title: string;
+    proof_evidence_val: string;
+    proof_evidence_desc: string;
+    problem_title: string;
+    problem_subtitle: string;
+    problem_excel: string;
+    problem_excel_desc: string;
+    problem_delayed_reports: string;
+    problem_delayed_reports_desc: string;
+    problem_weak_beneficiary: string;
+    problem_weak_beneficiary_desc: string;
+    problem_unclear_outcomes: string;
+    problem_unclear_outcomes_desc: string;
+    problem_donor_pressure: string;
+    problem_donor_pressure_desc: string;
+    solution_title: string;
+    solution_subtitle: string;
+    solution_one_platform: string;
+    solution_one_platform_desc: string;
+    solution_ai: string;
+    solution_ai_desc: string;
+    solution_donor_ready: string;
+    solution_donor_ready_desc: string;
+    solution_multilingual: string;
+    solution_multilingual_desc: string;
+    mockup_title: string;
+    mockup_active_score: string;
+    mockup_beneficiaries_reached: string;
+    mockup_data_validity: string;
+    mockup_system_health: string;
+    mockup_report_preview: string;
+    mockup_assessment_verified: string;
+    final_cta_title: string;
+    final_cta_subtitle: string;
+    final_cta_primary: string;
+    final_cta_secondary: string;
+  };
 }
 
 export const translations: Record<Language, TranslationDictionary> = {
@@ -337,6 +390,59 @@ export const translations: Record<Language, TranslationDictionary> = {
       theme_light: 'دۆخی ڕوون',
       theme_toggle: 'گۆڕینی دۆخی ڕەنگ',
     },
+    landing: {
+      hero_title: 'پێوانەکردنی فەرمی و شیکردنەوەی کاریگەری پڕۆژەکان بە پاڵپشتی ژیری دەستکرد',
+      hero_subtitle: 'سیستەمی فەرمی بۆ ڕێکخراوە ناحکومییەکان (NGO) و خێرخوازان',
+      hero_desc: 'سیستەمێکی فەرمی لۆکاڵی بۆ کۆکردنەوەی داتا، گەیشتن بە زانیارییە دیمۆگرافییەکان، بەدواداچوونی گەشەی سوودمەندان و پێدانی ڕاپۆرتی زانستی بە خێرخوازانی نێودەوڵەتی بە شێوەیەکی فەرمی.',
+      primary_cta: 'چوونەژورەوە بۆ پلاتفۆرم',
+      secondary_cta: 'بینینی ڕۆڵە تاقیکارییەکان',
+      proof_title: 'داتای نموونەیی گەشەی کارایی پلاتفۆرم',
+      proof_faster_reporting_title: 'خێرایی لە دروستکردنی ڕاپۆرت',
+      proof_faster_reporting_val: '١٠ جار',
+      proof_faster_reporting_desc: 'کەمکردنەوەی کاتی کۆکردنەوە و ئامادەکردنی زانیارییەکان بۆ پشتیوانانی دارایی.',
+      proof_cleaner_beneficiary_title: 'پاککردنەوەی داتای سوودمەندان',
+      proof_cleaner_beneficiary_val: '٩٩.٧%',
+      proof_cleaner_beneficiary_desc: 'کەمکردنەوەی تۆمارە دووبارەبووەکان و چاککردنی زانیاری دیمۆگرافی بۆ بەخشین.',
+      proof_donor_visibility_title: 'ڕوونی زانیارییەکان بۆ بەخشەران',
+      proof_donor_visibility_val: '١0٠%',
+      proof_donor_visibility_desc: 'پیشاندانی داتای پڕۆژە لۆکاڵییەکان بە شێوەیەکی ڕاستەوخۆ بەبێ دواکەوتن.',
+      proof_evidence_title: 'بەڵگەی دامەزراوی کاریگەری',
+      proof_evidence_val: '٤ بەش',
+      proof_evidence_desc: 'بەهێزکردنی بڕیارەکان بەپێی تۆماری نمرەکانی چاکبوونی لایەنی مادی و کۆمەڵایەتی سوودمەند.',
+      problem_title: 'کێشەکانی شێوازی نەریتی لە پێوانەکردنی کاریگەری',
+      problem_subtitle: 'بۆچی شێوازە کۆنەکان کارایی پێویست نادەن بە ڕێکخراو و بەخشەران؟',
+      problem_excel: 'فایلەکانی ئێکسڵی پەرشوبڵاو',
+      problem_excel_desc: 'تۆمارکردنی دەرەکی متمانەی پاراستن کەم دەکاتەوە و ئەگەری ونبوون یان تێکچوونی زانیارییەکان زیاترە.',
+      problem_delayed_reports: 'ڕاپۆرتە دواکەوتووەکان',
+      problem_delayed_reports_desc: 'ئامادەکردنی ڕاپۆرتی فەرمی دوای جێبەجێکردنی پڕۆژەکان ڕێگرە لە گرتنەبەری ڕێوشوێنی پێویست لە کاتی گونجاودا.',
+      problem_weak_beneficiary: 'نەبوونی تیشک لەسەر سوودمەند',
+      problem_weak_beneficiary_desc: 'بەدواداچوون تەنها بۆ پڕۆسەکان دەکرێت بەبێ پێوانەکردنی گۆڕانکارییە مادی و سایکۆلۆژییەکانی ناو ژیانی سوودمەند.',
+      problem_unclear_outcomes: 'مژاویبوونی دەرەنجامەکان',
+      problem_unclear_outcomes_desc: 'بۆچوونی بەخشەران ناڕوون دەبێت بەهۆی نەبوونی پێوەرێکی باوەڕپێکراو بۆ نمرەدان بە کاریگەری.',
+      problem_donor_pressure: 'فشاری ڕاپۆرتسازی خێرخوازان',
+      problem_donor_pressure_desc: 'زیادبوونی مەرجی توند بۆ ڕاپۆرتسازی خێرا و متمانەپێکراو کاتێکی زۆری تیمەکان لۆکاڵییەکان دەگرێت.',
+      solution_title: 'پلاتفۆرمی ImpactIQ: چارەسەری یەکگرتوو',
+      solution_subtitle: 'سیستەمێکی بەهێزی ناوەکی بۆ ژماردنی کاریگەری ڕاستەقینە',
+      solution_one_platform: 'یەک پلاتفۆرمی تەکامول',
+      solution_one_platform_desc: 'کۆکردنەوەی زانیاری پڕۆژەکان، تۆماری سوودمەندان، نمرەی باشتربوون و ڕاپۆرتواژۆکراو لە یەک شوێنی پارێزراودا.',
+      solution_ai: 'یاریدەدەری زیرەکی فەرمی',
+      solution_ai_desc: 'شیکردنەوەی داتاکان ڕاستەوخۆ بەپێی بەڵگە لۆکاڵییەکان کە یارمەتیت دەدات پێشنیاری چاکسازی بۆ لایەنەکان دروست بکەیت.',
+      solution_donor_ready: 'ڕاپۆرتی ئامادەکراو بۆ بەخشەران',
+      solution_donor_ready_desc: 'دروستکردنی ڕاپۆرتی مانگانە، وەرزی و ساڵانە لەگەڵ ئامارەکان بە تەنها یەک کلیک.',
+      solution_multilingual: 'پشتیوانی زمانە نیشتمانییەکان',
+      solution_multilingual_desc: 'کارکردنی تەواوی سیستەمەکە و وەڵامەکانی ژیری دەستکرد بە زمانەکانی کوردی سۆرانی، عەرەبی، و ئینگلیزی.',
+      mockup_title: 'نموونەی ڕووکاری شیکاری کاریگەری پڕۆژە (داتا تاقیکاری)',
+      mockup_active_score: 'نمرەی گشتی کاریگەری لۆکاڵی',
+      mockup_beneficiaries_reached: 'ژمارەی گەیشتن بە سوودمەندان',
+      mockup_data_validity: 'ڕێژەی پاراستن و دروستی داتا',
+      mockup_system_health: 'متمانەی تۆماری ڕاپۆرتەکان',
+      mockup_report_preview: 'پێشبینینی ڕاپۆرتی فەرمی ImpactIQ',
+      mockup_assessment_verified: 'هەڵسەنگاندنی فەرمی باوەڕپێکراو',
+      final_cta_title: 'ئامادەیت بۆ سەرکردایەتیکردنی پڕۆژەکانت بەپێی داتا؟',
+      final_cta_subtitle: 'دەستپێبکە بە تاقیکردنەوەی پلاتفۆرمەکە لە ڕێگەی دیمۆ فەرمییەکانەوە بۆ تێگەیشتن لە سیستەمەکە.',
+      final_cta_primary: 'تیشک بخەرە سەر پلاتفۆرم',
+      final_cta_secondary: 'هەڵبژاردنی زمان و دەستپێک',
+    },
   },
   ar: {
     nav: {
@@ -505,6 +611,59 @@ export const translations: Record<Language, TranslationDictionary> = {
       theme_light: 'الوضع الفاتح',
       theme_toggle: 'تغيير المظهر',
     },
+    landing: {
+      hero_title: 'القياس الفني والتحليل الذكي لأثر المشاريع التنموية بدعم الذكاء الاصطناعي',
+      hero_subtitle: 'النظام التقييمي المعتمد للمنظمات غير الحكومية والممولين الدوليين',
+      hero_desc: 'نظام داخلي متكامل مخصص لجمع البيانات الميدانية، وتتبع فئات ديموغرافية متعددة للمستفيدين، مع صياغة تقارير فنية موثقة تلبي أعلى المعايير المهنية للمانحين.',
+      primary_cta: 'الدخول إلى المنصة',
+      secondary_cta: 'عرض الأدوار التجريبية',
+      proof_title: 'مؤشرات تجريبية تعكس كفاءة إدارة الأثر بالرصد الرقمي',
+      proof_faster_reporting_title: 'سرعة تحرير التقارير',
+      proof_faster_reporting_val: '١٠ أضعاف',
+      proof_faster_reporting_desc: 'تقليص الزمن المستهلك في تبويب البيانات وإعداد الكشوف المخصصة للشركاء الدوليين.',
+      proof_cleaner_beneficiary_title: 'تنقية سجلات المستفيدين',
+      proof_cleaner_beneficiary_val: '٩٩.٧٪',
+      proof_cleaner_beneficiary_desc: 'الحد من تكرار السجلات وتأكيد الهوية الجغرافية والفئوية للخدمات المقدمة.',
+      proof_donor_visibility_title: 'شفافية كاملة للمانحين',
+      proof_donor_visibility_val: '١٠٠٪',
+      proof_donor_visibility_desc: 'إتاحة رصد فوري للنتائج المباشرة للمشاريع بشكل آمن وبثقة تامة.',
+      proof_evidence_title: 'توثيق علمي للأثر المحقق',
+      proof_evidence_val: '٤ فئات',
+      proof_evidence_desc: 'دعم اتخاذ القرار بالاعتماد على درجات قياس التحول الاجتماعي والاقتصادي لدى المستهدفين.',
+      problem_title: 'تحديات الأساليب التقليدية لتقييم الأثر الميداني',
+      problem_subtitle: 'لماذا تواجه المنظمات صعوبة في تلبية متطلبات المانحين بالوسائل القديمة؟',
+      problem_excel: 'ملفات وجداول إكسل المبعثرة',
+      problem_excel_desc: 'صعوبة تتبع التحديثات وأخطاء التعديل اليدوي تهُدد مصداقية البيانات المسجلة وتكاملها.',
+      problem_delayed_reports: 'تقارير فنية متأخرة الصدور',
+      problem_delayed_reports_desc: 'صدور مراجعات الأثر بعد أشهر من انتهاء التدخل يعيق إمكانية المعالجة والتوجيه السليم للمشروع.',
+      problem_weak_beneficiary: 'إهمال قياس واقع تحول المستفيد',
+      problem_weak_beneficiary_desc: 'التركيز على مخرجات العمل المادية وحساب التكاليف دون رصد التغير الحقيقي في جودة حياة المستهدفين.',
+      problem_unclear_outcomes: 'مخرجات غير واضحة المقاييس',
+      problem_unclear_outcomes_desc: 'صعوبة تحديد كفاءة الأنشطة الميدانية بسبب غياب درجات ومؤشرات تقييم معيارية.',
+      problem_donor_pressure: 'ضغوط المانحين للتقارير الفنية',
+      problem_donor_pressure_desc: 'تزايد المتطلبات التقنية الصارمة لتقديم مسوغات الأثر بشكل منتظم يزيد الأعباء الإدارية والفنية.',
+      solution_title: 'منصة ImpactIQ: نموذج مستقبلي متكامل للقياس',
+      solution_subtitle: 'خيار تقني مرن لحساب اتجاهات الأثر الميداني وصياغة الوثائق المصدقة',
+      solution_one_platform: 'منصة مركزية ثنائية التوجه',
+      solution_one_platform_desc: 'دمج سجلات البرامج، وملفات التعريف للمستفيدين، وتتبع نمر التحسن، وتقارير الحوكمة في مسار واحد.',
+      solution_ai: 'مستشار رصد ذكي',
+      solution_ai_desc: 'شیکردنەوەی داتاکان بە یارمەتی ژیری دەستکردی ناوەکی کە تەنها پشت بە داتا فەرمییەکانی سیستەمەکە دەبەستێت.',
+      solution_donor_ready: 'تقارير جاهزة للمانحين بنقرة واحدة',
+      solution_donor_ready_desc: 'إصدار كشوف تقييم فنية شاملة (ثانوية، ربع سنوية، سنوية) متوافقة بالكامل مع قواعد المراجعة الدولية.',
+      solution_multilingual: 'دعم كامل للغات الإقليمية',
+      solution_multilingual_desc: 'واجهات كاملة ونظام معالجة لغوي ومعرفي متكامل للغات الكردية السورانية، العربية، والإنجليزية.',
+      mockup_title: 'نموذج لوحة رصد الأداء الفني وأثر المبادرات (بيانات تجريبية)',
+      mockup_active_score: 'المعدل العام لقياس الأثر التنموي',
+      mockup_beneficiaries_reached: 'إجمالي الوصول للمستفيدين النشطين',
+      mockup_data_validity: 'معدل موثوقية السجلات والبيانات',
+      mockup_system_health: 'اعتماد جودة التقارير المصدقة',
+      mockup_report_preview: 'معاينة هيكلية لتقرير ImpactIQ الرسمي',
+      mockup_assessment_verified: 'أثر معتمد خاضع للمراجعة والتقييم',
+      final_cta_title: 'هل أنت مستعد لقيادة برامجك التنموية بالبيانات الدقيقة؟',
+      final_cta_subtitle: 'ابدأ بتجربة بيئة العمل التفاعلية عبر الحسابات التجريبية للمنصة لاستكشاف المزايا التقنية.',
+      final_cta_primary: 'استعراض بوابة المنصة',
+      final_cta_secondary: 'تحديد اللغة والبدء الفوري',
+    },
   },
   en: {
     nav: {
@@ -672,6 +831,59 @@ export const translations: Record<Language, TranslationDictionary> = {
       theme_dark: 'Dark mode',
       theme_light: 'Light mode',
       theme_toggle: 'Toggle theme',
+    },
+    landing: {
+      hero_title: 'Evidence-Based Project Impact Measurement & M&E Evaluation Brain',
+      hero_subtitle: 'The Standard Analytical System for NGOs, Interventions, and Global Donors',
+      hero_desc: 'Streamline trilingual data collection, analyze target demographics, track beneficiary progress, and generate professional donor-ready evaluation sheets backed by system data.',
+      primary_cta: 'Enter Platform',
+      secondary_cta: 'View Demo Sandbox Roles',
+      proof_title: 'Demo metrics illustrating digital monitoring efficiency',
+      proof_faster_reporting_title: 'Accelerated Reporting',
+      proof_faster_reporting_val: '10x Faster',
+      proof_faster_reporting_desc: 'Reduces time spent compiling field logs and tables into donor-compliant evaluation briefs.',
+      proof_cleaner_beneficiary_title: 'Pristine Beneficiary Data',
+      proof_cleaner_beneficiary_val: '99.7%',
+      proof_cleaner_beneficiary_desc: 'Eliminates duplicate beneficiary registrations and maps geographic assistance levels with precision.',
+      proof_donor_visibility_title: 'Complete Donor Visibility',
+      proof_donor_visibility_val: '100% Real-Time',
+      proof_donor_visibility_desc: 'Exposes localized field outputs and budget execution states safely with absolute clarity.',
+      proof_evidence_title: 'Tangible Social Evidence',
+      proof_evidence_val: '4 Categories',
+      proof_evidence_desc: 'Enforces quantitative assessment logs based on real pre-post intervention progress scores.',
+      problem_title: 'Why Traditional Impact Measurement Fails',
+      problem_subtitle: 'The pain points local NGOs face while gathering evidence under donor standards',
+      problem_excel: 'Scattered Spreadsheets & Excel Files',
+      problem_excel_desc: 'Manual updates, broken formulas, and separate files undermine data integrity and safety audits.',
+      problem_delayed_reports: 'Severe Post-Intervention Reporting Lag',
+      problem_delayed_reports_desc: 'Receiving reports months after activities conclude limits the ability to course-correct live projects.',
+      problem_weak_beneficiary: 'Missing Real Status of Beneficiaries',
+      problem_weak_beneficiary_desc: 'Failing to track physical and psychological progress results in empty counting with no qualitative proof.',
+      problem_unclear_outcomes: 'Ambiguous Intervention Success Outcomes',
+      problem_unclear_outcomes_desc: 'Without standard assessment scores (1-10), comparing separate initiatives is deeply subjective.',
+      problem_donor_pressure: 'Intense Global Strategic Reporting Pressure',
+      problem_donor_pressure_desc: 'Donors mandate rigid logs of every dollar spent, overwhelming local M&E field staff with compliance.',
+      solution_title: 'The ImpactIQ Platform: Harmonized Evaluation',
+      solution_subtitle: 'One unified environment to track outcomes, handle cohorts, and automate analytics',
+      solution_one_platform: 'A Single Source of Truth',
+      solution_one_platform_desc: 'Unifies localized projects, beneficiary demography, pre-post outcome logs, and formal sign-offs in one place.',
+      solution_ai: 'AI M&E Analytical Copilot',
+      solution_ai_desc: 'Translates and evaluates field data to suggest immediate strategic adjustments grounded purely on actual facts.',
+      solution_donor_ready: 'Donor-Ready Reporting in Seconds',
+      solution_donor_ready_desc: 'Produces highly detailed, compliant annual, quarterly, or monthly evaluation exports in one single tap.',
+      solution_multilingual: 'True Trilingual Kurdish, Arabic, & English',
+      solution_multilingual_desc: 'Complete system translation and localization enabling staff and observers to query in their working language.',
+      mockup_title: 'Interactive Project Analytics Dashboard Mockup (Demo Registry)',
+      mockup_active_score: 'Cumulative Project Impact Score',
+      mockup_beneficiaries_reached: 'Total Verified Active Reach',
+      mockup_data_validity: 'System Ledger Verification Rate',
+      mockup_system_health: 'Audit Trust & Report Health',
+      mockup_report_preview: 'ImpactIQ Official Document Preview',
+      mockup_assessment_verified: 'Verified Technical M&E Assessment',
+      final_cta_title: 'Ready to drive NGO interventions with data integrity?',
+      final_cta_subtitle: 'Step into the live workspace inside the sandbox using preset roles to discover platform features.',
+      final_cta_primary: 'Enter the Platform Workspace',
+      final_cta_secondary: 'Switch Language / Go to Top',
     },
   },
 };
