@@ -14,6 +14,7 @@ html, body {
   color: #0f172a;
   overflow-x: hidden;
   max-width: 100vw;
+  width: 100%;
 }
 
 /* Custom modern scrollbars */
@@ -33,6 +34,55 @@ html, body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+/* Base general styles for responsive alignment */
+.responsive-container {
+  width: 105%;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+}
+
+@media (min-width: 640px) {
+  .responsive-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Uniform card components responsive dimensions */
+.equal-card-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 640px) {
+  .equal-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.25rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .equal-card-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+/* Responsive Table Wrapper prevents overall page break and introduces local scroll */
+.table-responsive-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 0.75rem;
+  border-width: 1px;
+  border-color: #e2e8f0;
+  background-color: #ffffff;
+  width: 100%;
 }
 
 /* Custom CSS animations and smooth transitions */

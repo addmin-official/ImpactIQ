@@ -214,9 +214,9 @@ export const ProjectsView: React.FC = () => {
       </div>
 
       {/* Projects Table & Card layout */}
-      <div className="bg-white border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm">
+      <div className="table-responsive-wrapper shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs">
+          <table className="w-full text-right text-xs min-w-[800px] sm:min-w-0">
             <thead className="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-150">
               <tr>
                 <th className="px-6 py-4">ناوی پڕۆژە</th>
@@ -352,7 +352,7 @@ export const ProjectsView: React.FC = () => {
                 </div>
               )}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {/* Name */}
                 <div className="space-y-1.5">

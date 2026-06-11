@@ -268,7 +268,7 @@ export const AssistantView: React.FC = () => {
                   className="w-full text-right p-3 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all rounded-xl text-xs text-slate-650 flex items-start gap-2.5 group cursor-pointer"
                 >
                   <Icon size={14} className={`${prompt.color} shrink-0 mt-0.5 group-hover:scale-110 transition-transform`} />
-                  <span className="font-semibold">{prompt.text}</span>
+                  <span className="font-semibold flex-1 text-right break-words">{prompt.text}</span>
                 </button>
               );
             })}
