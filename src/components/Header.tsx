@@ -141,7 +141,7 @@ export const Header: React.FC = () => {
         {/* Connection status card */}
         <div className="hidden xl:flex items-center gap-3 bg-emerald-500/5 dark:bg-emerald-500/10 border border-emerald-500/15 dark:border-emerald-500/30 py-1.5 px-3.5 rounded-xl">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
-          <div className="text-right">
+          <div className={`text-right ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
             <div className="flex items-center gap-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400">
               <Database size={12} />
               <span>{getFirebaseReady()}</span>
@@ -151,23 +151,23 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Date tracker */}
-        <div className="hidden md:flex text-right text-xs text-slate-500 dark:text-slate-400 border-l border-slate-200 dark:border-slate-805 pl-4 h-9 flex-col justify-center">
-          <div className="flex items-center gap-1.5 justify-end font-semibold text-slate-700 dark:text-slate-300">
-            <Calendar size={13} className="text-slate-400 dark:text-slate-500" />
+        <div className={`hidden md:flex text-xs text-slate-500 dark:text-slate-400 h-9 flex-col justify-center ${direction === 'rtl' ? 'border-l border-slate-200 dark:border-slate-805 pl-4 text-right' : 'border-r border-slate-200 dark:border-slate-805 pr-4 text-left'}`}>
+          <div className={`flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 ${direction === 'rtl' ? 'justify-end' : 'justify-start'}`}>
+            <Calendar size={13} className="text-slate-400 dark:text-slate-550" />
             <span>{getDateString()}</span>
           </div>
-          <span className="text-[10px] text-slate-400 dark:text-slate-550 text-right">{getStatusString()}</span>
+          <span className={`text-[10px] text-slate-400 dark:text-slate-550 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>{getStatusString()}</span>
         </div>
 
         {/* Current profile status */}
         <div className="flex items-center gap-2.5 sm:gap-3">
-          <div className="hidden sm:block text-right">
+          <div className={`hidden sm:block ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
             <p className="text-xs font-bold text-slate-850 dark:text-slate-100 leading-tight">{currentUser.name}</p>
             <p className="text-[10px] text-slate-550 dark:text-slate-400 mt-0.5">{currentUser.email}</p>
           </div>
           <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold relative shrink-0">
             <User size={20} className="text-slate-500 dark:text-slate-400" />
-            <span className="absolute -bottom-1.5 -left-1.5 whitespace-nowrap z-10 flex">
+            <span className={`absolute -bottom-1.5 whitespace-nowrap z-10 flex ${direction === 'rtl' ? '-left-1.5' : '-right-1.5'}`}>
               {getRoleBadge(currentUser.role)}
             </span>
           </div>
