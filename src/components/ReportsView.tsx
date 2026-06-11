@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Report, ReportType } from '../types';
 import { 
   Plus, 
@@ -27,6 +28,8 @@ export const ReportsView: React.FC = () => {
     canDelete 
   } = useApp();
 
+  const { language, t, direction } = useLanguage();
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -47,13 +50,21 @@ export const ReportsView: React.FC = () => {
     if (!canWrite()) return;
     setIsEditing(false);
     setErrorMsg('');
-    setTitle('ڕاپۆرتی گشتگیری هەڵسەنگاندنی نوێ لە سلێمانی');
+    
+    // Choose sensible default localized texts
+    const defaultTitle = language === 'en' ? 'Comprehensive Impact Evaluation Report' : language === 'ar' ? 'التقرير الشامل لتقييم كفاءة الأثر الاجتماعي' : 'ڕاپۆرتی گشتگیری هەڵسەنگاندنی نوێ';
+    const defaultSummary = language === 'en' ? 'Over the monitored framework, the intervention programs successfully optimized community safety and professional livelihood tracks...' : language === 'ar' ? 'التحليل التنموي أظهر نجاح برامج المساعدة في مسارات الدعم التمويني والتدريب المهني المشترك للأسر المتعففة...' : 'لەماوەی دیاریکراودا پڕۆژەکە خرایە ژێر ڕیزبەندی چاکسازی مەیدانی و دابینکردنی توانا...';
+    const defaultResults = language === 'en' ? 'Sustained micro-ventures assets, vocational knowledge acquisition, and optimized household capital indexes.' : language === 'ar' ? 'تدشين مشاريع متناهية الصغر، تأهيل كفاءات، وتقليل مستويات الإنفاق الخارجي.' : 'دروستکردنی پیشەی نوێ بۆ ژماریەکی دیاریکراو لە ئافرەتان و کەمکردنەوەی جێگیری خەرجی خێزانەکان.';
+    const defaultImpact = language === 'en' ? 'Promoted inclusive social empowerment, resilience metrics, and verified regional confidence profiles.' : language === 'ar' ? 'إيجاد قنوات ثقة متبادلة، رفع معايير الجدوى المعيشية، ونسب تملك المقومات المستدامة.' : 'بەدەستهێنانی متمانە و ڕاپەڕاندنی ژانی کارپێکردن بە شێوازی مۆدێرن و ڕێکوپێک.';
+    const defaultRecommendations = language === 'en' ? 'We recommend allocating an additional 25% budget to technology and digital literacy programs for the next cycle.' : language === 'ar' ? 'نوصي بزيادة ميزانية التأهيل المهني والتحول الرقمي بنسبة 25٪ في الدورات المقبلة.' : 'پێشنیار دەکەین بۆ قۆناغی دووەم بودجەی تەکنەلۆژیا بە ڕێژەی %٢٥ بەرزبکرێتەوە.';
+
+    setTitle(defaultTitle);
     setReportType('evaluation');
     setProjectId(projects[0]?.id || '');
-    setExecutiveSummary('لەماوەی دیاریکراودا پڕۆژەکە خرایە ژێر ڕیزبەندی چاکسازی مەیدانی و دابینکردنی توانا...');
-    setResults('دروستکردنی پیشەی نوێ بۆ ژماریەکی دیاریکراو لە ئافرەتان و کەمکردنەوەی جێگیری خەرجی خێزانەکان.');
-    setImpactDescription('بەدەستهێنانی متمانە و ڕاپەڕاندنی ژانی کارپێکردن بە شێوازی مۆدێرن و ڕێکوپێک.');
-    setRecommendations('پێشنیار دەکەین بۆ قۆناغی دووەم بودجەی تەکنەلۆژیا بە ڕێژەی %٢٥ بەرزبکرێتەوە.');
+    setExecutiveSummary(defaultSummary);
+    setResults(defaultResults);
+    setImpactDescription(defaultImpact);
+    setRecommendations(defaultRecommendations);
     setIsModalOpen(true);
   };
 
@@ -77,7 +88,11 @@ export const ReportsView: React.FC = () => {
     setErrorMsg('');
 
     if (!title || !projectId || !executiveSummary || !results || !impactDescription || !recommendations) {
-      setErrorMsg('تکایە سەرجەم بڕگە پێویستەکانی ڕاپۆرت بنووسە بە سووێنی پێویست.');
+      setErrorMsg(
+        language === 'en' ? 'Please fill out all required fields.' :
+        language === 'ar' ? 'يرجى ملء جميع بنود التقرير بشكل متكامل للمراجعة.' :
+        'تکایە سەرجەم بڕگە پێویستەکانی ڕاپۆرت بنووسە بە سووێنی پێویست.'
+      );
       return;
     }
 
@@ -96,7 +111,7 @@ export const ReportsView: React.FC = () => {
       if (success) {
         setIsModalOpen(false);
       } else {
-        setErrorMsg('هەڵە لە دەستکاریکردنی ڕاپۆرت.');
+        setErrorMsg(t('common.error_occurred'));
       }
     } else {
       const success = addReport({
@@ -112,13 +127,19 @@ export const ReportsView: React.FC = () => {
       if (success) {
         setIsModalOpen(false);
       } else {
-        setErrorMsg('هەڵە لە تۆمارکردنی ڕاپۆرتی نوێ.');
+        setErrorMsg(t('common.error_occurred'));
       }
     }
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('ئایا دڵنیایت کە دەتەوێت ئەم ڕاپۆرتە بە فەرمی بسڕیتەوە؟')) {
+    const confirmMsg = language === 'en'
+      ? 'Are you sure you want to permanently delete this report?'
+      : language === 'ar'
+      ? 'هل أنت متأكد من حذف هذا التقرير رسمياً؟'
+      : 'ئایا دڵنیایت کە دەتەوێت ئەم ڕاپۆرتە بە فەرمی بسڕیتەوە؟';
+
+    if (confirm(confirmMsg)) {
       deleteReport(id);
     }
   };
@@ -128,26 +149,26 @@ export const ReportsView: React.FC = () => {
     const connectedProj = projects.find(p => p.id === report.projectId);
     const content = `
 =============================================
-ڕاپۆرتی فەرمی هەڵسەنگاندن و پێوانەی کاریگەری پڕۆژە دیموکان
+${language === 'en' ? 'Official M&E Report - ImpactIQ Platform' : language === 'ar' ? 'التقرير التقييمي المعتمد - مێشکی زیرەک' : 'ڕاپۆرتی فەرمی هەڵسەنگاندن و پێوانەی کاریگەری پڕۆژە دیموکان'}
 =============================================
-ناونیشانی ڕاپۆرت: ${report.title}
-جۆری ڕاپۆرت: ${report.reportType}
-پڕۆژەی بەستراو: ${connectedProj?.name || 'ڕوون نییە'}
-بەرواری ڕاستکردنی ڕاپۆرت: ${report.createdAt}
+${language === 'en' ? 'Report Title:' : language === 'ar' ? 'عنوان التقرير:' : 'ناونیشانی ڕاپۆرت:'} ${report.title}
+${language === 'en' ? 'Report Type:' : language === 'ar' ? 'نوع التقرير:' : 'جۆری ڕاپۆرت:'} ${report.reportType}
+${language === 'en' ? 'Associated Initiative:' : language === 'ar' ? 'المبادرة المرتبطة:' : 'پڕۆژەی بەستراو:'} ${connectedProj?.name || 'M&E Project'}
+${language === 'en' ? 'Submission Date:' : language === 'ar' ? 'تاريخ التوثيق:' : 'بەرواری ڕاستکردنی ڕاپۆرت:'} ${report.createdAt}
 ---------------------------------------------
-١. کورتەی گشتی جێبەجێکردن:
+1. ${language === 'en' ? 'Executive Summary:' : language === 'ar' ? 'الملخص التنفيذي والسياق العام:' : 'کورتەی گشتی جێبەجێکردن:'}
 ${report.executiveSummary}
 
-٢. ئەنجامە ڕاستەوخۆکان:
+2. ${language === 'en' ? 'Direct Outcomes:' : language === 'ar' ? 'النتائج والمخرجات الملموسة:' : 'ئەنجامە ڕاستەوخۆکان:'}
 ${report.results}
 
-٣. کاریگەرییە گوزەراوەکان لەسەر کۆمەڵگا:
+3. ${language === 'en' ? 'Community Impact:' : language === 'ar' ? 'مستويات الأثر الاجتماعي والتمكين:' : 'کاریگەرییە گوزەراوەکان لەسەر کۆمەڵگا:'}
 ${report.impactDescription}
 
-٤. ڕاسپاردە و پێشنیاری بۆ نوێخوازی پڕۆژەی داهاتوو:
+4. ${language === 'en' ? 'Sustained Recommendations:' : language === 'ar' ? 'التوصيات وإجراءات التحسين المقترحة:' : 'ڕاسپاردە و پێشنیاری بۆ نوێخوازی پڕۆژەی داهاتوو:'}
 ${report.recommendations}
 ---------------------------------------------
-مێشکی زیرەکی پێوانەکردن و هەڵسەنگاندنی کاریگەری
+Generated by ImpactIQ Smart Platform.
     `;
     const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
     const url = URL.createObjectURL(blob);
@@ -158,32 +179,71 @@ ${report.recommendations}
     URL.revokeObjectURL(url);
   };
 
+  // Localized texts
+  const getSubHeaderDesc = () => {
+    if (language === 'en') return 'Formulate, endorse, download, or compile certified impact evaluation reports.';
+    if (language === 'ar') return 'تصنيف وصياغة التقارير التشغيلية المعتمدة لتقديمها مباشرة للشركاء والممولين.';
+    return 'ئامادەکاری، پەسەندکردن، هەناردە یان چاپکردنی ڕاپۆرتە فەرمییەکان بە زمانی کوردی سۆرانی';
+  };
+
+  const getReportTypeLabel = (type: string) => {
+    switch (type) {
+      case 'monthly': return language === 'en' ? 'Monthly Progress' : language === 'ar' ? 'تقرير شهري' : 'ڕاپۆرتی مانگانە';
+      case 'quarterly': return language === 'en' ? 'Quarterly Evaluation' : language === 'ar' ? 'تقرير ربع سنوي' : 'ڕاپۆرتی وەرزی';
+      case 'annual': return language === 'en' ? 'Annual Strategy' : language === 'ar' ? 'التقرير السنوي الشامل' : 'ڕاپۆرتی ساڵانە';
+      default: return language === 'en' ? 'Impact Evaluation' : language === 'ar' ? 'تقييم الأثر النهائي' : 'ڕاپۆرتی هەڵسەنگاندنی کاریگەری';
+    }
+  };
+
+  const getConnectedProjText = () => language === 'en' ? 'Associated Initiative' : language === 'ar' ? 'المبادرة المرتبطة' : 'پڕۆژەی بەستراو';
+  const getReadLabel = () => language === 'en' ? 'Created On:' : language === 'ar' ? 'تاريخ المراجعة:' : 'بەروار:';
+
+  // Printable Area Localized Strings
+  const getPrintHeading1 = () => language === 'en' ? 'National M&E Center for Social Development' : language === 'ar' ? 'المركز الوطني لرصد وتقييم الأثر التنموي' : 'مەڵبەندی نیشتمانی بۆ چاودێری و هەڵسەنگاندن';
+  const getPrintHeading2 = () => {
+    if (language === 'en') return 'State Commission for Quality and Project Impact Verification';
+    if (language === 'ar') return 'ديوان الرقابة والتدقيق المستقل لأداء المشاريع الإنسانية والتمكين';
+    return 'سازمان پێوانەکردنی کاریگەری پڕۆژە نیشتمانی و مرۆییەکان';
+  };
+  const getPrintSerialPrefix = () => language === 'en' ? 'Official Dossier Code: MNE-2026-0987' : language === 'ar' ? 'الرقم الإشاري المعتمد: MNE-2026-0987' : 'ژمارەی فەرمی: MNE-2026-0987';
+  const getPrintDossierType = () => language === 'en' ? 'CERTIFIED EVALUATION DOSSIER - LEVEL A' : language === 'ar' ? 'وثيقة تقييم الجدوى والأثر الإنساني - مستوى أ' : 'بەڵگەنامەی فەرمی هەڵسەنگاندنی پێشکەوتن و کاریگەری';
+  const getPrintDateLabel = () => language === 'en' ? 'Submission date:' : language === 'ar' ? 'تاريخ التحرير الموثق:' : 'بەرواری پێشکەشکردن:';
+  
+  const getPrintSealLabel = () => language === 'en' ? 'OFFICIAL SEAL' : language === 'ar' ? 'مهر الديوان المعتمد' : 'مۆری فەرمی';
+  const getPrintSignatory1 = () => language === 'en' ? 'Lead M&E Field Inspector' : language === 'ar' ? 'مفتش قياس الأثر والرقابة الميداني' : 'کارمەندی باڵای چاودێری';
+  const getPrintSealText = () => language === 'en' ? 'APPROVED SEAL' : language === 'ar' ? 'رسمي معتمد' : 'مۆر فەرمی';
+
+  const getFieldConnected = () => language === 'en' ? 'Project connect' : language === 'ar' ? 'برمجة المشروع' : 'بۆ چ پڕۆژەیەک بڕواندرێت';
+  const getFieldConnectedLabel = () => language === 'en' ? 'Report formulation type' : language === 'ar' ? 'تصنيف وثيقة التقرير' : 'جۆری زمان یان بەش';
+
+  const getReadOnlyLabel = () => language === 'en' ? 'Viewer Mode' : language === 'ar' ? 'صلاحية مشاهدة' : 'بینەر';
+
   return (
     <div className="space-y-6 animate-fade-in font-sans">
       
       {/* Page Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-extrabold text-slate-800 text-lg">ڕاپۆرتسازی و پێشکەشکردن</h3>
-          <p className="text-xs text-slate-500 mt-1">ئامادەکاری، پەسەندکردن، هەناردە یان چاپکردنی ڕاپۆرتە فەرمییەکان بە زمانی کوردی سۆرانی</p>
+        <div className="text-right rtl:text-right ltr:text-left">
+          <h3 className="font-extrabold text-slate-800 text-lg">{t('reports.title')}</h3>
+          <p className="text-xs text-slate-500 mt-1">{getSubHeaderDesc()}</p>
         </div>
         {canWrite() && (
           <button
             id="btn-add-report"
             onClick={openAddModal}
-            className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-750 hover:bg-amber-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all shadow-md shadow-amber-600/10 cursor-pointer"
+            className="inline-flex items-center gap-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all shadow-md shadow-amber-600/10 cursor-pointer"
           >
             <Plus size={16} />
-            <span>داڕشتنی ڕاپۆرتی نوێ</span>
+            <span>{t('reports.add')}</span>
           </button>
         )}
       </div>
 
       {/* Reports Listing cards */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 text-right rtl:text-right ltr:text-left">
         {reports.length === 0 ? (
           <div className="lg:col-span-2 p-12 text-center bg-white border border-slate-200/80 rounded-2xl text-slate-400 text-xs">
-            هیچ ڕاپۆرتێکی فەرمی لێرەدا بەردەست نییە. بۆ دیمۆ یەک دانە دروست بکە!
+            {t('reports.empty_state')}
           </div>
         ) : (
           reports.map((report) => {
@@ -193,11 +253,9 @@ ${report.recommendations}
                 <div className="space-y-3">
                   {/* Title and Badging */}
                   <div className="flex items-start justify-between gap-3">
-                    <div>
-                      <span className="text-[10px] bg-amber-50 text-amber-600 border border-amber-100 font-extrabold px-2 py-0.5 rounded-md leading-normal">
-                        {report.reportType === 'evaluation' ? 'هەڵسەنگاندنی کۆتایی' : 
-                         report.reportType === 'annual' ? 'ڕاپۆرتی ساڵانە' :
-                         report.reportType === 'quarterly' ? 'ڕاپۆرتی وەرزی' : 'ڕاپۆرتی مانگانە'}
+                    <div className="text-right rtl:text-right ltr:text-left">
+                      <span className="text-[10px] bg-amber-50 text-amber-600 border border-amber-100 font-extrabold px-2 py-0.5 rounded-md leading-normal inline-block">
+                        {getReportTypeLabel(report.reportType)}
                       </span>
                       <h4 className="font-bold text-slate-800 text-base mt-2 leading-snug">{report.title}</h4>
                     </div>
@@ -207,7 +265,7 @@ ${report.recommendations}
                         <button
                           onClick={() => openEditModal(report)}
                           className="p-1.5 text-slate-400 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
-                          title="دەستکاری بکە"
+                          title={language === 'en' ? 'Edit' : language === 'ar' ? 'تعديل التقرير' : 'دەستکاری'}
                         >
                           <Edit3 size={14} />
                         </button>
@@ -215,8 +273,8 @@ ${report.recommendations}
                       {canDelete() && (
                         <button
                           onClick={() => handleDelete(report.id)}
-                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
-                          title="ڕەشکردنەوە"
+                          className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-55 rounded-lg transition-colors cursor-pointer"
+                          title={language === 'en' ? 'Delete' : 'حذف'}
                         >
                           <Trash2 size={14} />
                         </button>
@@ -226,23 +284,32 @@ ${report.recommendations}
 
                   {/* Connected Details info */}
                   <p className="text-[11px] text-slate-400">
-                    پڕۆژەی بەستراو: <strong className="text-slate-600 font-bold">{proj?.name || 'ڕوون نییە'}</strong>
+                    {getConnectedProjText()}: <strong className="text-slate-600 font-bold">
+                      {proj ? 
+                        (proj.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'en' ? 'Food Waste Reduction' : 
+                         proj.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'ar' ? 'تقليل هدر الطعام' :
+                         proj.name === 'توانابەخشینی ژنان' && language === 'en' ? 'Women Empowerment' :
+                         proj.name === 'توانابەخشینی ژنان' && language === 'ar' ? 'تمكين المرأة' :
+                         proj.name === 'فێرکردنی لاوان' && language === 'en' ? 'Youth Education' :
+                         proj.name === 'فێرکردنی لاوان' && language === 'ar' ? 'تعليم الشباب' : proj.name)
+                        : 'M&E Project'}
+                    </strong>
                   </p>
 
                   {/* Summary Snippet */}
                   <div className="p-3 bg-slate-50 rounded-xl space-y-1">
-                    <span className="text-[10px] font-bold text-slate-550 block">کورتەی جێبەجێکردن:</span>
-                    <p className="text-xs text-slate-655 font-medium leading-relaxed line-clamp-2">{report.executiveSummary}</p>
+                    <span className="text-[10px] font-bold text-slate-500 block">{t('reports.executive_summary')}:</span>
+                    <p className="text-xs text-slate-705 font-medium leading-relaxed line-clamp-2">{report.executiveSummary}</p>
                   </div>
 
                   {/* Detailed Accordion results previews */}
-                  <div className="text-xs space-y-1 text-slate-700">
+                  <div className="text-xs space-y-2 text-slate-700">
                     <div>
-                      <strong className="text-slate-500 block text-[10px]">کاریگەری پیشاندراو:</strong>
+                      <strong className="text-slate-500 block text-[10px]">{t('reports.impact_description')}:</strong>
                       <p className="line-clamp-1">{report.impactDescription}</p>
                     </div>
-                    <div className="pt-1.5">
-                      <strong className="text-slate-500 block text-[10px]">گرنگترین ڕاسپاردەکان:</strong>
+                    <div className="pt-1">
+                      <strong className="text-slate-500 block text-[10px]">{t('reports.recommendations')}:</strong>
                       <p className="line-clamp-1 font-semibold text-sky-700">{report.recommendations}</p>
                     </div>
                   </div>
@@ -250,26 +317,26 @@ ${report.recommendations}
 
                 {/* Print and Export Buttons footer */}
                 <div className="pt-4 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
-                  <span>بەروار: {report.createdAt}</span>
+                  <span>{getReadLabel()} {report.createdAt}</span>
                   <div className="flex items-center gap-2">
                     
                     {/* Plain Text Download */}
                     <button
                       onClick={() => downloadAsTextFile(report)}
                       className="inline-flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-2.5 py-1.5 rounded-lg font-bold transition-colors cursor-pointer"
-                      title="داگرتن بە فایلی نووسراو"
+                      title={language === 'en' ? 'Download report as text' : 'داگرتن'}
                     >
                       <Download size={13} />
-                      <span>داگرتن</span>
+                      <span>{t('reports.download')}</span>
                     </button>
 
                     {/* Official printable modal activation */}
                     <button
                       onClick={() => setPrintTargetReport(report)}
-                      className="inline-flex items-center gap-1 bg-amber-600 hover:bg-amber-700 text-white px-2.5 py-1.5 rounded-lg font-bold transition-all shadow-sm cursor-pointer"
+                      className="inline-flex items-center gap-1 bg-amber-600 hover:bg-amber-750 text-white px-2.5 py-1.5 rounded-lg font-bold transition-all shadow-sm cursor-pointer"
                     >
                       <Printer size={13} />
-                      <span>چاپکردنی فەرمی</span>
+                      <span>{t('reports.print')}</span>
                     </button>
 
                   </div>
@@ -287,103 +354,106 @@ ${report.recommendations}
             
             {/* Overlay Header action bar */}
             <div className="p-4 bg-slate-900 text-white flex items-center justify-between shrink-0 no-print">
-              <div>
-                <span className="text-[10px] bg-sky-500/20 text-sky-300 font-bold px-2 py-0.5 rounded">شیکردنەوەی چاپی ئامادەکراو</span>
-                <h4 className="font-bold text-xs mt-1">ڕاپۆرتی فەرمی متمانەپێکراو</h4>
+              <div className="text-right rtl:text-right ltr:text-left">
+                <span className="text-[10px] bg-sky-500/20 text-sky-300 font-bold px-2 py-0.5 rounded">
+                  {language === 'en' ? 'Official Certified Print Layout' : language === 'ar' ? 'تنسيق الطباعة الرسمي المعتمد' : 'شیکردنەوەی چاپی ئامادەکراو'}
+                </span>
+                <h4 className="font-bold text-xs mt-1">{language === 'en' ? 'Platform Security Verification Assessment' : 'ڕاپۆرتی فەرمی متمانەپێکراو'}</h4>
               </div>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => window.print()}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-colors cursor-pointer animate-pulse"
                 >
                   <Printer size={14} />
-                  <span>چاپ بکە</span>
+                  <span>{language === 'en' ? 'Print Document' : language === 'ar' ? 'اطبع الآن' : 'چاپ بکە'}</span>
                 </button>
                 <button
                   onClick={() => setPrintTargetReport(null)}
                   className="p-1 px-2.5 bg-slate-800 hover:bg-slate-750 text-slate-300 hover:text-white rounded-lg text-xs font-bold transition-colors cursor-pointer"
                 >
-                  داخستن
+                  {language === 'en' ? 'Close' : 'داخستن'}
                 </button>
               </div>
             </div>
 
             {/* Printable Area - styled explicitly with standard letterhead template */}
-            <div id="printable-area" className="p-10 bg-white text-slate-900 font-sans space-y-6 flex-1 overflow-y-auto selection:bg-amber-200">
+            <div id="printable-area" className="p-10 bg-white text-slate-900 font-sans space-y-6 flex-1 overflow-y-auto selection:bg-amber-200 text-right rtl:text-right ltr:text-left">
               
               {/* Official Document Letterhead */}
-              <div className="border-b-4 border-double border-slate-800 pb-6 flex items-center justify-between">
-                <div className="space-y-1">
-                  <h1 className="text-xl font-black text-slate-900">مەڵبەندی نیشتمانی بۆ چاودێری و هەڵسەنگاندن</h1>
-                  <p className="text-xs text-slate-500 font-bold">سازمانی هەڵسەنگاندنی کاریگەری پڕۆژە نیشتمانی و مرۆییەکان</p>
-                  <p className="text-[10px] text-slate-400">ژمارەی فەرمی: MNE-2026-0987</p>
+              <div className="border-b-4 border-double border-slate-800 pb-6 flex items-center justify-between flex-row-reverse">
+                <div className="space-y-1 text-right">
+                  <h1 className="text-lg font-black text-slate-900">{getPrintHeading1()}</h1>
+                  <p className="text-xs text-slate-500 font-bold">{getPrintHeading2()}</p>
+                  <p className="text-[10px] text-slate-400">{getPrintSerialPrefix()}</p>
                 </div>
                 <div className="text-left space-y-1 font-mono text-[10px]">
-                  <p>تۆماری فەرمی کوردستان</p>
-                  <p>کۆدی بەڵگەنامە: EVAL-PDF</p>
-                  <p>بەرواری پێشکەشکردن: {printTargetReport.createdAt}</p>
+                  <p>{language === 'en' ? 'Regional Administration' : 'تۆماری فەرمی کوردستان'}</p>
+                  <p>EVAL-PDF-SECURED</p>
+                  <p>{getPrintDateLabel()} {printTargetReport.createdAt}</p>
                 </div>
               </div>
 
               {/* Stamp and QR Code decorative */}
-              <div className="text-center font-bold text-base py-3 bg-slate-100 rounded-xl">
-                <span>بەڵگەنامەی فەرمی هەڵسەنگاندنی پێشکەوتن و کاریگەری</span>
+              <div className="text-center font-bold text-sm py-2.5 bg-slate-100 rounded-xl">
+                <span>{getPrintDossierType()}</span>
               </div>
 
               {/* Title & Metadata fields */}
-              <div className="space-y-2 border-r-4 border-indigo-500 pr-4">
-                <h2 className="text-base font-black text-slate-800">ناونیشانی ڕاپۆرت: {printTargetReport.title}</h2>
-                <div className="grid grid-cols-2 gap-4 text-xs">
-                  <p>جۆری بەڵگە: <strong className="font-black text-slate-800">{printTargetReport.reportType.toUpperCase()}</strong></p>
-                  <p>پڕۆژەی گرێدراو: <strong className="font-bold text-slate-800">{projects.find(p => p.id === printTargetReport.projectId)?.name || 'نەزانراو'}</strong></p>
-                  <p>شوێنی جێبەجێکردن: <strong className="font-bold text-slate-800">{projects.find(p => p.id === printTargetReport.projectId)?.location || 'کوردستان'}</strong></p>
+              <div className="space-y-2 border-r-4 border-indigo-500 pr-4 text-right">
+                <h2 className="text-base font-black text-slate-800">{language === 'en' ? 'Report Title' : 'ناونیشانی ڕاپۆرت'}: {printTargetReport.title}</h2>
+                <div className="grid grid-cols-2 gap-4 text-xs font-medium text-slate-600">
+                  <p>{language === 'en' ? 'Type:' : 'جۆری بەڵگە:'} <strong className="font-black text-slate-800">{printTargetReport.reportType.toUpperCase()}</strong></p>
+                  <p>{getConnectedProjText()}: <strong className="font-bold text-slate-800">
+                    {projects.find(p => p.id === printTargetReport.projectId)?.name || 'M&E Project'}
+                  </strong></p>
                 </div>
               </div>
 
               {/* Main Content blocks */}
-              <div className="space-y-5 text-sm leading-relaxed text-slate-800">
+              <div className="space-y-5 text-xs leading-relaxed text-slate-800">
                 
                 {/* 1. Executive Summary */}
-                <div className="space-y-2">
-                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">١. کورتەی جێبەجێکردن و دۆخ:</h3>
-                  <p className="text-xs text-justify font-medium">{printTargetReport.executiveSummary}</p>
+                <div className="space-y-1">
+                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">{t('reports.executive_summary')}:</h3>
+                  <p className="text-justify font-medium">{printTargetReport.executiveSummary}</p>
                 </div>
 
                 {/* 2. Results */}
-                <div className="space-y-2">
-                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">٢. ئەنجامە کۆنکرێتی و ڕاستەوخۆکان:</h3>
-                  <p className="text-xs text-justify font-medium">{printTargetReport.results}</p>
+                <div className="space-y-1">
+                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">{t('reports.results')}:</h3>
+                  <p className="text-justify font-medium">{printTargetReport.results}</p>
                 </div>
 
                 {/* 3. Impact */}
-                <div className="space-y-2">
-                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">٣. نمرە و هەڵسەنگاندنی کاریگەری لەسەر بژێوی سوودمەندان:</h3>
-                  <p className="text-xs text-justify font-medium">{printTargetReport.impactDescription}</p>
+                <div className="space-y-1">
+                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">{t('reports.impact_description')}:</h3>
+                  <p className="text-justify font-medium">{printTargetReport.impactDescription}</p>
                 </div>
 
                 {/* 4. Recommendations */}
-                <div className="space-y-2">
-                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">٤. ڕاسپاردە و پێشنیارەکان بۆ قۆناغەکانی گەشەپێدان:</h3>
-                  <p className="text-xs text-justify font-extrabold text-indigo-900">{printTargetReport.recommendations}</p>
+                <div className="space-y-1">
+                  <h3 className="font-extrabold text-slate-900 text-sm border-b border-slate-200 pb-1">{t('reports.recommendations')}:</h3>
+                  <p className="text-justify font-extrabold text-indigo-900">{printTargetReport.recommendations}</p>
                 </div>
 
               </div>
 
               {/* Signatures & Seal Section */}
-              <div className="pt-10 flex items-center justify-between text-xs border-t border-slate-200/80 mt-10">
+              <div className="pt-8 flex items-center justify-between text-xs border-t border-slate-200/80 mt-10">
                 <div className="text-center space-y-1">
-                  <p className="font-bold text-slate-500">مۆر و ناوی سەرپەرشتیاری دڵنیایی</p>
-                  <p className="font-black text-slate-800">کارمەندی باڵای چاودێری</p>
-                  <div className="h-10 w-24 mx-auto border border-dashed border-slate-350 rounded-lg flex items-center justify-center text-[9px] text-slate-400 mt-2">
+                  <p className="font-bold text-slate-400">{getPrintSerialPrefix()}</p>
+                  <p className="font-black text-slate-800">{getPrintSignatory1()}</p>
+                  <div className="h-10 w-24 mx-auto border border-dashed border-slate-305 rounded-lg flex items-center justify-center text-[9px] text-slate-400 mt-2">
                     <FileSignature size={20} className="text-slate-400 opacity-60" />
                   </div>
                 </div>
 
                 <div className="text-center space-y-1">
-                  <p className="font-bold text-slate-500">سازمان و مۆری ڕێکخراوی نێودەوڵەتی</p>
-                  <p className="font-black text-slate-850">پەسەندکردنی کۆتایی بریکار</p>
-                  <div className="h-14 w-14 mx-auto border-2 border-double border-indigo-400 rounded-full flex items-center justify-center text-[10px] font-black text-indigo-500 uppercase rotate-12 mt-2">
-                    MNE SEAL
+                  <p className="font-bold text-slate-400">{getPrintSealLabel()}</p>
+                  <p className="font-black text-slate-850">{language === 'en' ? 'Seal validation' : 'پەسەندکردنی کۆتایی'}</p>
+                  <div className="h-12 w-14 mx-auto border-2 border-double border-indigo-400 rounded-full flex items-center justify-center text-[8px] font-black text-indigo-500 uppercase rotate-12 mt-2">
+                    {getPrintSealText()}
                   </div>
                 </div>
               </div>
@@ -398,20 +468,24 @@ ${report.recommendations}
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-40">
           <div className="bg-white rounded-2xl w-full max-w-xl border border-slate-200 overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
             
-            <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-base">{isEditing ? 'دەستکاریکردنی ڕاپۆرت' : 'داڕشتن و پێشکەشکردنی ڕاپۆرتی تازە'}</h4>
-                <p className="text-[11px] text-slate-300 mt-1">تکایە بەشەکانی ڕاپۆرتەکە بە کوردی متمانەپێکراو بنووسە</p>
+            <div className="p-6 bg-slate-900 text-white flex items-center justify-between text-right">
+              <div className="text-right rtl:text-right ltr:text-left">
+                <h4 className="font-bold text-base">{isEditing ? t('reports.edit') : t('reports.add')}</h4>
+                <p className="text-[11px] text-slate-300 mt-1">
+                  {language === 'en' ? 'Ensure structural outcomes correspond with registered donor goals.' :
+                   language === 'ar' ? 'يرجى تقديم بيانات متوزانة للمجلس لتدقيق الكفاءة والأداء التنموي.' :
+                   'تکایە بەشەکانی ڕاپۆرتەکە بە کوردی متمانەپێکراو بنووسە'}
+                </p>
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-200 hover:text-white transition-colors"
+                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-200 hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
-            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4">
+            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-right rtl:text-right ltr:text-left">
               {errorMsg && (
                 <div className="p-3 bg-rose-50 border border-rose-100 text-rose-600 text-xs rounded-xl font-semibold">
                   {errorMsg}
@@ -420,14 +494,14 @@ ${report.recommendations}
 
               {/* Title */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">ناونیشانی فەرمی ڕاپۆرت <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{language === 'en' ? 'Document title' : 'ناونیشانی فەرمی ڕاپۆرت'} <span className="text-rose-500">*</span></label>
                 <input
                   type="text"
                   required
-                  placeholder="بۆ نموونە: ڕاپۆرتی وەرزی یەکەمی ژینگە..."
+                  placeholder={language === 'en' ? 'e.g. Project Evaluation report' : 'بۆ نموونە: ڕاپۆرتی وەرزی یەکەمی ژینگە...'}
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
@@ -435,32 +509,39 @@ ${report.recommendations}
                 
                 {/* Connected Project selection */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">بۆ چ پڕۆژەیەک بڕواندرێت <span className="text-rose-500">*</span></label>
+                  <label className="text-xs font-bold text-slate-600 block">{getFieldConnected()} <span className="text-rose-500">*</span></label>
                   <select
                     required
                     value={projectId}
                     onChange={(e) => setProjectId(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800 cursor-pointer"
                   >
-                    <option value="" disabled>پڕۆژەکە بەستنەوە بکە</option>
+                    <option value="" disabled>{language === 'en' ? 'Choose project option' : 'پڕۆژەکە بەستنەوە بکە'}</option>
                     {projects.map(p => (
-                      <option key={p.id} value={p.id}>{p.name}</option>
+                      <option key={p.id} value={p.id}>
+                        {p.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'en' ? 'Food Waste Reduction' : 
+                         p.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'ar' ? 'تقليل هدر الطعام' :
+                         p.name === 'توانابەخشینی ژنان' && language === 'en' ? 'Women Empowerment' :
+                         p.name === 'توانابەخشینی ژنان' && language === 'ar' ? 'تمكين المرأة' :
+                         p.name === 'فێرکردنی لاوان' && language === 'en' ? 'Youth Education' :
+                         p.name === 'فێرکردنی لاوان' && language === 'ar' ? 'تعليم الشباب' : p.name}
+                      </option>
                     ))}
                   </select>
                 </div>
 
                 {/* Report Type */}
-                <div className="space-y-1.5 font-sans">
-                  <label className="text-xs font-bold text-slate-600 block">جۆری زمان یان بەش</label>
+                <div className="space-y-1.5">
+                  <label className="text-xs font-bold text-slate-600 block">{getFieldConnectedLabel()}</label>
                   <select
                     value={reportType}
                     onChange={(e) => setReportType(e.target.value as ReportType)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800 cursor-pointer"
                   >
-                    <option value="monthly">ڕاپۆرتی مانگانە</option>
-                    <option value="quarterly">ڕاپۆرتی وەرزی</option>
-                    <option value="annual">ڕاپۆرتی گشتگیری ساڵانە</option>
-                    <option value="evaluation">ڕاپۆرتی هەڵسەنگاندنی کاریگەری</option>
+                    <option value="monthly">{language === 'en' ? 'Monthly Progress' : language === 'ar' ? 'تقرير فني شهري' : 'ڕاپۆرتی مانگانە'}</option>
+                    <option value="quarterly">{language === 'en' ? 'Quarterly Evaluation' : language === 'ar' ? 'تقرير فني ربع سنوي' : 'ڕاپۆرتی وەرزی'}</option>
+                    <option value="annual">{language === 'en' ? 'Annual Comprehensive' : language === 'ar' ? 'التقرير السنوي المتكامل' : 'ڕاپۆرتی ساڵانە'}</option>
+                    <option value="evaluation">{t('reports.type')}</option>
                   </select>
                 </div>
 
@@ -468,70 +549,70 @@ ${report.recommendations}
 
               {/* Executive summary */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">کوری کلاسیفیکاسیۆن یان کورتەی جێبەجێکردن <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('reports.executive_summary')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="ڕوونکردنەوەی فاز و کۆنترۆڵی کارە گرنگەکان..."
+                  placeholder="..."
                   value={executiveSummary}
                   onChange={(e) => setExecutiveSummary(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
               {/* Results outputs */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">ئەنجامە چۆنایەتی و چەندایەتییەکان <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('reports.results')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="چی بەدەست هێنراوە لە گۆڕەپانی کرداریدا..."
+                  placeholder="..."
                   value={results}
                   onChange={(e) => setResults(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
               {/* Impact analysis text */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">شیبونەوە و وەسفی کاریگەری گشتی <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('reports.impact_description')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="چۆن بووە هۆی کەمکردنەوەی ناڕەحەتی یان بڵاوکردنەوەی متمانە..."
+                  placeholder="..."
                   value={impactDescription}
                   onChange={(e) => setImpactDescription(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
               {/* Recommendations */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">ڕاسپاردەکان و پێشنیاری بۆ نوێخوازی پڕۆژەی داهاتوو <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('reports.recommendations')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="بۆ کەمکردنەوەی لادانەکان، چی تر پێویستە بکرێت..."
+                  placeholder="..."
                   value={recommendations}
                   onChange={(e) => setRecommendations(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-amber-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
               {/* Submit panel */}
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3 font-sans">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer"
                 >
-                  پاشگەزبوونەوە
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-colors shadow-md shadow-amber-600/10 cursor-pointer"
                 >
-                  {isEditing ? 'نوێکردنەوەی ڕاپۆرت' : 'پاشەکەوتکردن بە فەرمی'}
+                  {isEditing ? t('common.save') : t('common.add')}
                 </button>
               </div>
 

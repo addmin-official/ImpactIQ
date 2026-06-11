@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { Project, ProjectStatus, RiskLevel } from '../types';
 import { 
   Plus, 
@@ -25,6 +26,8 @@ export const ProjectsView: React.FC = () => {
     canWrite, 
     canDelete 
   } = useApp();
+
+  const { language, t, direction } = useLanguage();
 
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('all');
@@ -98,17 +101,29 @@ export const ProjectsView: React.FC = () => {
     setErrorMsg('');
 
     if (!name || !location || !description || !keyResult) {
-      setErrorMsg('تکایە هەموو خانە پێویستەکان پڕبکەرەوە.');
+      setErrorMsg(
+        language === 'en' ? 'Please fill out all required fields.' :
+        language === 'ar' ? 'يرجى ملء جميع الحقول المطلوبة.' :
+        'تکایە هەموو خانە پێویستەکان پڕبکەرەوە.'
+      );
       return;
     }
 
     if (progress < 0 || progress > 100) {
-      setErrorMsg('ڕێژەی ڕاپەڕاندن دەبێت لە نێوان ٠ تا ١٠٠ بێت.');
+      setErrorMsg(
+        language === 'en' ? 'Progress rate must be between 0 and 100.' :
+        language === 'ar' ? 'يجب أن تكون نسبة الإنجاز بين 0 و 100.' :
+        'ڕێژەی ڕاپەڕاندن دەبێت لە نێوان ٠ تا ١٠٠ بێت.'
+      );
       return;
     }
 
     if (budget < 0) {
-      setErrorMsg('بودجە نابێت لە سفر کەمتر بێت.');
+      setErrorMsg(
+        language === 'en' ? 'Budget cannot be less than zero.' :
+        language === 'ar' ? 'لا يمكن أن تكون الميزانية أقل من صفر.' :
+        'بودجە نابێت لە سفر کەمتر بێت.'
+      );
       return;
     }
 
@@ -130,7 +145,7 @@ export const ProjectsView: React.FC = () => {
       if (success) {
         setIsModalOpen(false);
       } else {
-        setErrorMsg('هەڵە لە نوێکردنەوەی پڕۆژەکەدا.');
+        setErrorMsg(t('common.error_occurred'));
       }
     } else {
       const success = addProject({
@@ -149,15 +164,76 @@ export const ProjectsView: React.FC = () => {
       if (success) {
         setIsModalOpen(false);
       } else {
-        setErrorMsg('هەڵە لە زیادکردنی پڕۆژە نوێیەکەدا.');
+        setErrorMsg(t('common.error_occurred'));
       }
     }
   };
 
   const handleDelete = (id: string) => {
-    if (confirm('ئایا دڵنیایت کە دەتەوێت ئەم پڕۆژەیە بە یەکجاری بسڕیتەوە؟ زانیارییەکانی دەسڕێنەوە.')) {
+    const confirmMsg = language === 'en' 
+      ? 'Are you sure you want to permanently delete this project? All associated registers will be removed.'
+      : language === 'ar'
+      ? 'هل أنت متأكد من حذف هذا المشروع نهائياً؟ سيتم مسح بياناته بالكامل.'
+      : 'ئایا دڵنیایت کە دەتەوێت ئەم پڕۆژەیە بە یەکجاری بسڕیتەوە؟ زانیارییەکانی دەسڕێنەوە.';
+    
+    if (confirm(confirmMsg)) {
       deleteProject(id);
     }
+  };
+
+  const getSubtitle = () => {
+    if (language === 'en') return 'Track register, budgets, progress, and warning parameters of humanitarian projects.';
+    if (language === 'ar') return 'سجل بمحافظ المشاريع الإنسانية والوطنية لمتابعة التراخيص والموازنات ونسب التقدم.';
+    return 'تۆمار، جێبەجێکردن، بودجە و مەترسی پڕۆژە مرۆییەکان لێرەوە چاودێری بکە';
+  };
+
+  const getSearchPlaceholder = () => {
+    if (language === 'en') return 'Search projects, locations, or descriptions...';
+    if (language === 'ar') return 'ابحث هنا عن اسم المشروع، الموقع، أو التفاصيل...';
+    return 'لێرە بگەڕێ بۆ پڕۆژە، شوێن، یان وەسف...';
+  };
+
+  const getFilterStatusLabel = () => {
+    if (language === 'en') return 'Status Filter:';
+    if (language === 'ar') return 'تصفية حسب الحالة:';
+    return 'جۆری دۆخ:';
+  };
+
+  const getTableHeadProject = () => {
+    if (language === 'en') return 'Project Name';
+    if (language === 'ar') return 'اسم المشروع';
+    return 'ناوی پڕۆژە';
+  };
+
+  const getTableHeadLocation = () => language === 'en' ? 'Location' : language === 'ar' ? 'الموقع' : 'شوێن';
+  const getTableHeadStatus = () => t('projects.status');
+  const getTableHeadRisk = () => t('projects.risk');
+  const getTableHeadBudget = () => language === 'en' ? 'Allocated Budget' : language === 'ar' ? 'الميزانية المرصودة' : 'بودجەی تەرخانکراو';
+  const getTableHeadBeneficiaries = () => language === 'en' ? 'Beneficiaries Target' : language === 'ar' ? 'المستهدفين' : 'ژمارەی سوودمەند';
+  const getTableHeadProgress = () => t('projects.progress');
+  const getTableHeadActions = () => language === 'en' ? 'Actions' : language === 'ar' ? 'إجراءات' : 'کردارەکان';
+
+  const getStatusLabelText = (status: string) => {
+    switch (status) {
+      case 'active': return t('projects.active');
+      case 'planning': return t('projects.planning');
+      case 'completed': return t('projects.completed');
+      default: return t('projects.on_hold');
+    }
+  };
+
+  const getRiskLabelText = (risk: string) => {
+    switch (risk) {
+      case 'high': return t('dashboard.risk_high');
+      case 'medium': return t('dashboard.risk_medium');
+      default: return t('dashboard.risk_low');
+    }
+  };
+
+  const getReadOnlyLabel = () => {
+    if (language === 'en') return 'Read Only';
+    if (language === 'ar') return 'عرض فقط';
+    return 'تەنها خوێندنەوە';
   };
 
   return (
@@ -165,9 +241,9 @@ export const ProjectsView: React.FC = () => {
       
       {/* Header and Add button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h3 className="font-extrabold text-slate-800 text-lg">بەڕێوەبردنی پڕۆژەکان</h3>
-          <p className="text-xs text-slate-500 mt-1">تۆمار، جێبەجێکردن، بودجە و مەترسی پڕۆژە مرۆییەکان لێرەوە چاودێری بکە</p>
+        <div className="text-right rtl:text-right ltr:text-left">
+          <h3 className="font-extrabold text-slate-800 text-lg">{t('projects.title')}</h3>
+          <p className="text-xs text-slate-500 mt-1">{getSubtitle()}</p>
         </div>
         
         {canWrite() && (
@@ -177,7 +253,7 @@ export const ProjectsView: React.FC = () => {
             className="inline-flex items-center gap-2 bg-sky-600 hover:bg-sky-700 text-white font-bold text-sm px-4 py-2.5 rounded-xl transition-all shadow-md shadow-sky-600/10 cursor-pointer"
           >
             <Plus size={16} />
-            <span>پڕۆژەی نوێ زیاد بکە</span>
+            <span>{t('projects.add')}</span>
           </button>
         )}
       </div>
@@ -185,30 +261,30 @@ export const ProjectsView: React.FC = () => {
       {/* Control Box: Search & filters */}
       <div className="bg-white border border-slate-200/80 p-4 rounded-2xl flex flex-col sm:flex-row items-center gap-4 shadow-sm">
         <div className="relative w-full sm:flex-1">
-          <Search size={18} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
+          <Search size={18} className={`absolute ${direction === 'rtl' ? 'right-3.5' : 'left-3.5'} top-1/2 -translate-y-1/2 text-slate-400`} />
           <input
             id="project-search"
             type="text"
-            placeholder="لێرە بگەڕێ بۆ پڕۆژە، شوێن، یان وەسف..."
+            placeholder={getSearchPlaceholder()}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-4 pr-10 py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm outline-none focus:bg-white focus:border-sky-500 transition-all font-medium"
+            className={`w-full ${direction === 'rtl' ? 'pl-4 pr-10' : 'pl-10 pr-4'} py-2.5 bg-slate-50 rounded-xl border border-slate-200 text-sm outline-none focus:bg-white focus:border-sky-500 transition-all font-medium`}
           />
         </div>
 
         <div className="flex items-center gap-2 w-full sm:w-auto">
-          <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">جۆری دۆخ:</span>
+          <span className="text-xs font-semibold text-slate-500 whitespace-nowrap">{getFilterStatusLabel()}</span>
           <select
             id="filter-project-status"
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full sm:w-44 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium outline-none focus:bg-white focus:border-sky-500 transition-all"
+            className="w-full sm:w-44 bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs font-medium outline-none focus:bg-white focus:border-sky-500 transition-all cursor-pointer text-slate-700"
           >
-            <option value="all">هەموو پڕۆژەکان</option>
-            <option value="planning">پلاندانان</option>
-            <option value="active">چالاک</option>
-            <option value="completed">تەواوکراو</option>
-            <option value="on_hold">ڕاگیراو</option>
+            <option value="all">{language === 'en' ? 'All Projects' : language === 'ar' ? 'جميع المشاريع' : 'هەموو پڕۆژەکان'}</option>
+            <option value="planning">{t('projects.planning')}</option>
+            <option value="active">{t('projects.active')}</option>
+            <option value="completed">{t('projects.completed')}</option>
+            <option value="on_hold">{t('projects.on_hold')}</option>
           </select>
         </div>
       </div>
@@ -216,24 +292,24 @@ export const ProjectsView: React.FC = () => {
       {/* Projects Table & Card layout */}
       <div className="table-responsive-wrapper shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-right text-xs min-w-[800px] sm:min-w-0">
+          <table className="w-full text-right rtl:text-right ltr:text-left text-xs min-w-[800px] sm:min-w-0">
             <thead className="bg-slate-50 text-slate-500 uppercase font-bold border-b border-slate-150">
               <tr>
-                <th className="px-6 py-4">ناوی پڕۆژە</th>
-                <th className="px-6 py-4">شوێن</th>
-                <th className="px-6 py-4">دۆخ</th>
-                <th className="px-6 py-4">مەترسی</th>
-                <th className="px-6 py-4">بودجەی تەرخانکراو</th>
-                <th className="px-6 py-4">ژمارەی سوودمەند</th>
-                <th className="px-6 py-4">ڕێژەی ڕاپەڕاندن</th>
-                <th className="px-6 py-4 text-center">کردارەکان</th>
+                <th className="px-6 py-4">{getTableHeadProject()}</th>
+                <th className="px-6 py-4">{getTableHeadLocation()}</th>
+                <th className="px-6 py-4">{getTableHeadStatus()}</th>
+                <th className="px-6 py-4">{getTableHeadRisk()}</th>
+                <th className="px-6 py-4">{getTableHeadBudget()}</th>
+                <th className="px-6 py-4">{getTableHeadBeneficiaries()}</th>
+                <th className="px-6 py-4">{getTableHeadProgress()}</th>
+                <th className="px-6 py-4 text-center">{getTableHeadActions()}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
               {filteredProjects.length === 0 ? (
                 <tr>
                   <td colSpan={8} className="px-6 py-12 text-center text-slate-400">
-                    هیچ پڕۆژەیەک نەدۆزرایەوە کە لەگەڵ گەڕان و پاڵاوتنەکە بگونجێت.
+                    {t('projects.empty_state')}
                   </td>
                 </tr>
               ) : (
@@ -241,14 +317,33 @@ export const ProjectsView: React.FC = () => {
                   <tr key={p.id} className="hover:bg-slate-50/55 transition-colors">
                     <td className="px-6 py-4">
                       <div>
-                        <span className="font-bold text-slate-800 text-sm block">{p.name}</span>
+                        {/* Predefined project names translated inline for absolute quality */}
+                        <span className="font-bold text-slate-800 text-sm block">
+                          {p.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'en' ? 'Food Waste Reduction' : 
+                           p.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'ar' ? 'تقليل هدر الطعام' :
+                           p.name === 'توانابەخشینی ژنان' && language === 'en' ? 'Women Empowerment' :
+                           p.name === 'توانابەخشینی ژنان' && language === 'ar' ? 'تمكين المرأة' :
+                           p.name === 'فێرکردنی لاوان' && language === 'en' ? 'Youth Education' :
+                           p.name === 'فێرکردنی لاوان' && language === 'ar' ? 'تعليم الشباب' :
+                           p.name === 'پشتیوانی خێزانە هەژارەکان' && language === 'en' ? 'Impoverished Families Support' :
+                           p.name === 'پشتیوانی خێزانە هەژارەکان' && language === 'ar' ? 'مساعدة الأسر المتعففة' :
+                           p.name === 'پاراستنی ژینگە' && language === 'en' ? 'Environmental Conservation' :
+                           p.name === 'پاراستنی ژینگە' && language === 'ar' ? 'حماية البيئة' : p.name}
+                        </span>
                         <span className="text-[11px] text-slate-400 mt-0.5 line-clamp-1 max-w-xs">{p.description}</span>
                       </div>
                     </td>
                     <td className="px-6 py-4 text-slate-500 whitespace-nowrap">
                       <span className="inline-flex items-center gap-1">
                         <MapPin size={12} className="text-slate-400" />
-                        <span>{p.location}</span>
+                        <span>
+                          {p.location === 'هەولێر' && language === 'en' ? 'Erbil' :
+                           p.location === 'هەولێر' && language === 'ar' ? 'أربيل' :
+                           p.location === 'سلێمانی' && language === 'en' ? 'Sulaymaniyah' :
+                           p.location === 'سلێمانی' && language === 'ar' ? 'السليمانية' :
+                           p.location === 'دهۆک' && language === 'en' ? 'Duhok' :
+                           p.location === 'دهۆک' && language === 'ar' ? 'دهوك' : p.location}
+                        </span>
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -258,9 +353,7 @@ export const ProjectsView: React.FC = () => {
                         p.status === 'completed' ? 'bg-indigo-50 text-indigo-600 border border-indigo-100' :
                         'bg-rose-50 text-rose-600 border border-rose-100'
                       }`}>
-                        {p.status === 'planning' ? 'پلاندانان' :
-                         p.status === 'active' ? 'چالاک' :
-                         p.status === 'completed' ? 'تەواوکراو' : 'ڕاگیراو'}
+                        {getStatusLabelText(p.status)}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -269,10 +362,7 @@ export const ProjectsView: React.FC = () => {
                         p.risk === 'medium' ? 'text-amber-600' : 'text-rose-600'
                       }`}>
                         <AlertOctagon size={12} />
-                        <span>
-                          {p.risk === 'low' ? 'نزم' :
-                           p.risk === 'medium' ? 'مامناوەند' : 'بەرز'}
-                        </span>
+                        <span>{getRiskLabelText(p.risk)}</span>
                       </span>
                     </td>
                     <td className="px-6 py-4 font-bold text-slate-800 whitespace-nowrap">
@@ -298,7 +388,7 @@ export const ProjectsView: React.FC = () => {
                           <button
                             onClick={() => openEditModal(p)}
                             className="p-1.5 text-slate-500 hover:text-sky-600 hover:bg-sky-50 rounded-lg transition-colors cursor-pointer"
-                            title="دەستکاریکردن"
+                            title={language === 'en' ? 'Edit' : language === 'ar' ? 'تعديل' : 'دەستکاریکردن'}
                           >
                             <Edit3 size={15} />
                           </button>
@@ -307,13 +397,13 @@ export const ProjectsView: React.FC = () => {
                           <button
                             onClick={() => handleDelete(p.id)}
                             className="p-1.5 text-slate-500 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                            title="سڕینەوە"
+                            title={language === 'en' ? 'Delete' : language === 'ar' ? 'حذف' : 'سڕینەوە'}
                           >
                             <Trash2 size={15} />
                           </button>
                         )}
                         {!canWrite() && (
-                          <span className="text-[10px] text-slate-400">تەنها خوێندنەوە</span>
+                          <span className="text-[10px] text-slate-400">{getReadOnlyLabel()}</span>
                         )}
                       </div>
                     </td>
@@ -332,20 +422,24 @@ export const ProjectsView: React.FC = () => {
             
             {/* Modal Title */}
             <div className="p-6 bg-slate-900 text-white flex items-center justify-between">
-              <div>
-                <h4 className="font-bold text-base">{isEditing ? 'دەستکاری پڕۆژە بکە' : 'تۆمارکردنی پڕۆژەی نوێ'}</h4>
-                <p className="text-[11px] text-slate-300 mt-1">تکایە خانە دیاریکراوەکان بە جوانی بە زمانی کوردی پڕ بکەرەوە</p>
+              <div className="text-right rtl:text-right ltr:text-left">
+                <h4 className="font-bold text-base">{isEditing ? t('projects.edit') : t('projects.add')}</h4>
+                <p className="text-[11px] text-slate-300 mt-1">
+                  {language === 'en' ? 'Please supply valid metrics for monitoring execution correctness.' :
+                   language === 'ar' ? 'يرجى تعبئة الحقول المطلوبة لضمان جودة الأثر المعروض.' :
+                   'تکایە خانە دیاریکراوەکان بە جوانی بە زمانی کوردی پڕ بکەرەوە'}
+                </p>
               </div>
               <button 
                 onClick={() => setIsModalOpen(false)}
-                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-200 hover:text-white transition-colors"
+                className="p-1.5 hover:bg-slate-800 rounded-lg text-slate-200 hover:text-white transition-colors cursor-pointer"
               >
                 <X size={18} />
               </button>
             </div>
 
             {/* Modal Form */}
-            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4">
+            <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-6 space-y-4 text-right rtl:text-right ltr:text-left">
               {errorMsg && (
                 <div className="p-3 bg-rose-50 border border-rose-100 text-rose-600 text-xs rounded-xl font-semibold">
                   {errorMsg}
@@ -356,117 +450,117 @@ export const ProjectsView: React.FC = () => {
                 
                 {/* Name */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">ناوی پڕۆژە <span className="text-rose-500">*</span></label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.name')} <span className="text-rose-500">*</span></label>
                   <input
                     type="text"
                     required
-                    placeholder="نموونە: کەمکردنەوەی پاشماوەی خۆراک"
+                    placeholder={language === 'en' ? 'Task Name' : language === 'ar' ? 'اسم المشروع المستهدَف' : 'نموونە: کەمکردنەوەی پاشماوەی خۆراک'}
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Location */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">شوێنی جێبەجێکردن <span className="text-rose-500">*</span></label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.location')} <span className="text-rose-500">*</span></label>
                   <input
                     type="text"
                     required
-                    placeholder="نموونە: هەولێر، سلێمانی، دهۆک..."
+                    placeholder="Erbil, Sulaymaniyah, Duhok..."
                     value={location}
                     onChange={(e) => setLocation(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Status */}
                 <div className="space-y-1.5 font-sans">
-                  <label className="text-xs font-bold text-slate-600 block">دۆخی چالاكی پڕۆژە</label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.status')}</label>
                   <select
                     value={status}
                     onChange={(e) => setStatus(e.target.value as ProjectStatus)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800 cursor-pointer"
                   >
-                    <option value="planning">پلاندانان / ئامادەکاری</option>
-                    <option value="active">چالاک / لەژێر کاردا</option>
-                    <option value="completed">تەواوکراو بە فەرمی</option>
-                    <option value="on_hold">ڕاگیراوە بەشێوەی کاتی</option>
+                    <option value="planning">{t('projects.planning')}</option>
+                    <option value="active">{t('projects.active')}</option>
+                    <option value="completed">{t('projects.completed')}</option>
+                    <option value="on_hold">{t('projects.on_hold')}</option>
                   </select>
                 </div>
 
                 {/* Progress */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">ڕێژەی ڕاپەڕاندن / ڕێژەی جێبەجێکردن (%)</label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.progress')} (%)</label>
                   <input
                     type="number"
                     min={0}
                     max={100}
                     value={progress}
                     onChange={(e) => setProgress(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Budget */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">بودجەی تەرخانکراو (USD)</label>
+                  <label className="text-xs font-bold text-slate-600 block">{language === 'en' ? 'Allocated Budget (USD)' : language === 'ar' ? 'الميزانية المخصصة (دولار)' : 'بودجەی تەرخانکراو (USD)'}</label>
                   <input
                     type="number"
                     min={0}
                     value={budget}
                     onChange={(e) => setBudget(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Beneficiaries Target */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">کاتێكی سەرەتایی بۆ مەزەندەی سوودمەندان</label>
+                  <label className="text-xs font-bold text-slate-600 block">{language === 'en' ? 'Initial Beneficiary Count' : language === 'ar' ? 'العدد المبدأي للمستفيدين' : 'کاتیێكی سەرەتایی بۆ مەزەندەی سوودمەندان'}</label>
                   <input
                     type="number"
                     min={0}
                     value={beneficiariesCount}
                     onChange={(e) => setBeneficiariesCount(Number(e.target.value))}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Start Date */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">بەرواری دەستپێکردن</label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.start_date')}</label>
                   <input
                     type="date"
                     required
                     value={startDate}
                     onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* End Date */}
                 <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">بەرواری تەواوبوون</label>
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.end_date')}</label>
                   <input
                     type="date"
                     required
                     value={endDate}
                     onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                   />
                 </div>
 
                 {/* Risk */}
-                <div className="space-y-1.5">
-                  <label className="text-xs font-bold text-slate-600 block">ئاستی مەترسی</label>
+                <div className="space-y-1.5 col-span-1 sm:col-span-2">
+                  <label className="text-xs font-bold text-slate-600 block">{t('projects.risk')}</label>
                   <select
                     value={risk}
                     onChange={(e) => setRisk(e.target.value as RiskLevel)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800 cursor-pointer"
                   >
-                    <option value="low">نزم — بارودۆخ زۆر سەقامگیرە</option>
-                    <option value="medium">مامناوەند — چاودێری سوودمەندان پێویستە</option>
-                    <option value="high">بەرز — مەترسی لەسەر جێبەجێکردنی بودجە هەیە</option>
+                    <option value="low">{language === 'en' ? 'Low — Conditions fully stable' : language === 'ar' ? 'منخفض — بيئة العمل مستقرة جداً' : 'نزم — بارودۆخ زۆر سەقامگیرە'}</option>
+                    <option value="medium">{language === 'en' ? 'Medium — Additional verification needed' : language === 'ar' ? 'متوسط — يحتاج إلى رصد وتدقيق دوري' : 'مامناوەند — چاودێری سوودمەندان پێویستە'}</option>
+                    <option value="high">{language === 'en' ? 'High — Critical barriers/budget alert' : language === 'ar' ? 'مرتفع — معوقات وصعوبات في الإنجاز المالي' : 'بەرز — مەترسی لەسەر جێبەجێکردنی بودجە هەیە'}</option>
                   </select>
                 </div>
 
@@ -474,27 +568,27 @@ export const ProjectsView: React.FC = () => {
 
               {/* Description */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">کورتەیەک لەسەر بیرۆکە و ئامانجی پڕۆژە دیمو <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('projects.description')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="وەسفێکی کورت لەسەر کارەکە بنووسە..."
+                  placeholder={language === 'en' ? 'Brief summary of goals and objectives...' : language === 'ar' ? 'ملخص بسيط لفكرة وأهداف المشروع...' : 'وەسفێکی کورت لەسەر کارەکە بنووسە...'}
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
               {/* Key output / result */}
               <div className="space-y-1.5">
-                <label className="text-xs font-bold text-slate-600 block">ئەنجامی سەرەکی و چاوەڕوانکراو <span className="text-rose-500">*</span></label>
+                <label className="text-xs font-bold text-slate-600 block">{t('projects.key_result')} <span className="text-rose-500">*</span></label>
                 <textarea
                   required
                   rows={2}
-                  placeholder="بۆ نموونە: دابینکردنی ٢٥،٠٠ کیلۆ کەرەستە بە خێزانە بێ دەرامەتەکان..."
+                  placeholder={language === 'en' ? 'Key delivery targets...' : language === 'ar' ? 'النتائج الأساسية والمخرجات المتوقعة...' : 'بۆ نموونە: دابینکردنی ٢٥،٠٠ کیلۆ کەرەستە بە خێزانە بێ دەرامەتەکان...'}
                   value={keyResult}
                   onChange={(e) => setKeyResult(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
                 />
               </div>
 
@@ -505,13 +599,13 @@ export const ProjectsView: React.FC = () => {
                   onClick={() => setIsModalOpen(false)}
                   className="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs px-4 py-2.5 rounded-xl transition-colors cursor-pointer"
                 >
-                  پاشگەزبوونەوە
+                  {t('common.cancel')}
                 </button>
                 <button
                   type="submit"
                   className="bg-sky-600 hover:bg-sky-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl transition-colors shadow-md shadow-sky-600/10 cursor-pointer"
                 >
-                  {isEditing ? 'پەسەندکردنی زانیاری دەستکاریکراو' : 'زیادکردنی داتای فەرمی'}
+                  {isEditing ? t('common.save') : t('common.add')}
                 </button>
               </div>
 

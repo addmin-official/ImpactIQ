@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
+import { useLanguage } from '../context/LanguageContext';
 import { INITIAL_USERS } from '../mockData';
-import { ShieldCheck, Mail, Lock, LogIn, Loader2 } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, LogIn, Loader2, Globe } from 'lucide-react';
 
 interface LoginViewProps {
   onLoginSuccess: () => void;
@@ -9,6 +10,7 @@ interface LoginViewProps {
 
 export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
   const { switchUser, loginWithEmail, isAuthLoading } = useApp();
+  const { language, setLanguage, direction, t } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationError, setValidationError] = useState('');
@@ -19,7 +21,11 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     setValidationError('');
 
     if (!email) {
-      setValidationError('تکایە ئیمەیڵی فەرمی بنووسە.');
+      setValidationError(
+        language === 'en' ? 'Please specify an email address.' :
+        language === 'ar' ? 'يرجى كتابة البريد الإلكتروني الرسمي.' :
+        'تکایە ئیمەیڵی فەرمی بنووسە.'
+      );
       return;
     }
 
@@ -29,14 +35,26 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       if (success) {
         onLoginSuccess();
       } else {
-        setValidationError('ئەم ئیمەیڵە تۆمار نەکراوە. دەتوانیت لە ڕێگەی دوگمە ئامادەکانەوە تاقیکردنەوە بکەیت.');
+        setValidationError(
+          language === 'en' ? 'This email address is not registered. Try the preset sandbox accounts.' :
+          language === 'ar' ? 'هذا البريد الإلكتروني غير مسجل. يمكنك تسجيل الدخول باستخدام الحسابات الجاهزة.' :
+          'ئەم ئیمەیڵە تۆمار نەکراوە. دەتوانیت لە ڕێگەی دوگمە ئامادەکانەوە تاقیکردنەوە بکەیت.'
+        );
       }
     } catch (err: any) {
       console.error(err);
       if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-email') {
-        setValidationError('زانیارییەکانت هەڵەیە. دڵنیابە لە نووسینی زانیاری دروست.');
+        setValidationError(
+          language === 'en' ? 'Invalid credentials. Please verify your entries.' :
+          language === 'ar' ? 'المعلومات المدخلة غير صحيحة. تأكد منها وحاول مجدداً.' :
+          'زانیارییەکانت هەڵەیە. دڵنیابە لە نووسینی زانیاری دروست.'
+        );
       } else {
-        setValidationError('هەڵەیەک ڕوویدا لە کاتی پەيوەستبوون بە سێرڤەر. دڵنیابەرەوە لە هێڵی ئینتەرنێتەکەت.');
+        setValidationError(
+          language === 'en' ? 'Server communication failure. Please verify internet connectivity.' :
+          language === 'ar' ? 'حدث خطأ في الاتصال بالخادم. تحقق من جودة الإنترنت.' :
+          'هەڵەیەک ڕوویدا لە کاتی پەيوەستبوون بە سێرڤەر. دڵنیابەرەوە لە هێڵی ئینتەرنێتەکەت.'
+        );
       }
     }
   };
@@ -51,9 +69,26 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
     }
   };
 
+  const iconPositionClass = direction === 'rtl' ? 'right-3' : 'left-3';
+  const inputPaddingClass = direction === 'rtl' ? 'pl-4 pr-10' : 'pl-10 pr-4';
+
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col justify-center items-center p-6 font-sans relative overflow-hidden">
       
+      {/* Floating Language Switcher at Top Corner */}
+      <div className={`absolute top-4 ${direction === 'rtl' ? 'left-4' : 'right-4'} z-20 flex items-center gap-1.5 border border-slate-700/60 rounded-xl px-2.5 py-1.5 bg-slate-950/85 text-white/95 box-shadow-xl`}>
+        <Globe size={14} className="text-slate-400 shrink-0" />
+        <select
+          value={language}
+          onChange={(e) => setLanguage(e.target.value as any)}
+          className="bg-transparent text-xs font-bold text-slate-300 focus:outline-none cursor-pointer"
+        >
+          <option value="ckb" className="bg-slate-950 text-white">کوردی</option>
+          <option value="ar" className="bg-slate-950 text-white">العربية</option>
+          <option value="en" className="bg-slate-950 text-white">English</option>
+        </select>
+      </div>
+
       {/* Background gradients */}
       <div className="absolute top-0 left-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl -translate-x-12 -translate-y-12"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl translate-x-12 translate-y-12"></div>
@@ -66,8 +101,8 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <ShieldCheck size={28} />
           </div>
           <div>
-            <h2 className="text-lg font-black tracking-tight text-slate-100">مێشکی زیرەکی پێوانەکردن</h2>
-            <p className="text-xs text-slate-400 mt-1">تکایە بچۆ ژوورەوە بۆ بینینی داتا و تۆمارەکانی کاریگەری</p>
+            <h2 className="text-lg font-black tracking-tight text-slate-100">{t('login.title')}</h2>
+            <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">{t('login.sub_title')}</p>
           </div>
         </div>
 
@@ -82,9 +117,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           
           {/* Email */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-300 block">ناونیشانی ئیمەیڵی فەرمی</label>
+            <label className="text-xs font-bold text-slate-300 block">{t('login.email')}</label>
             <div className="relative">
-              <Mail size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Mail size={14} className={`absolute ${iconPositionClass} top-1/2 -translate-y-1/2 text-slate-500`} />
               <input
                 id="login-email"
                 type="email"
@@ -92,7 +127,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 value={email}
                 disabled={isAuthLoading}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 pl-4 pr-10 text-xs font-medium text-slate-200 outline-none transition-colors"
+                className={`w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 ${inputPaddingClass} text-xs font-medium text-slate-200 outline-none transition-colors`}
                 required
               />
             </div>
@@ -100,9 +135,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
           {/* Password */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-slate-300 block">وینەی تێپەڕەوشە (نهێنی)</label>
+            <label className="text-xs font-bold text-slate-300 block">{t('login.password')}</label>
             <div className="relative">
-              <Lock size={14} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500" />
+              <Lock size={14} className={`absolute ${iconPositionClass} top-1/2 -translate-y-1/2 text-slate-500`} />
               <input
                 id="login-password"
                 type="password"
@@ -110,7 +145,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 value={password}
                 disabled={isAuthLoading}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 pl-4 pr-10 text-xs font-medium text-slate-200 outline-none transition-colors"
+                className={`w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 ${inputPaddingClass} text-xs font-medium text-slate-200 outline-none transition-colors`}
               />
             </div>
           </div>
@@ -123,12 +158,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           >
             {isAuthLoading ? (
               <>
-                <span>کەمێک چاوەڕوان بە...</span>
+                <span>{t('common.loading')}</span>
                 <Loader2 size={14} className="animate-spin" />
               </>
             ) : (
               <>
-                <span>چوونەژوورەوە</span>
+                <span>{t('login.signIn')}</span>
                 <LogIn size={14} />
               </>
             )}
@@ -138,7 +173,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
         {/* Sandbox fast-connector buttons */}
         <div className="pt-4 border-t border-slate-800 space-y-3">
-          <p className="text-[10px] font-bold text-slate-400 text-center">تاقیکردنەوەی خێرا بە ڕۆڵە جیاوازەکان (تەنیا بە یەک لێدان):</p>
+          <p className="text-[10px] font-bold text-slate-400 text-center">{t('login.demo_roles')}</p>
           
           <div className="grid grid-cols-1 gap-2">
             {/* Admin preset */}
@@ -151,9 +186,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-500"></div>
-                <span>ڕۆڵی بەڕێوەبەر (ئادمین فەرمی)</span>
+                <span>{t('common.role_admin')} (ئادمین فەرمی / المسؤول)</span>
               </div>
-              <span className="text-[10px] text-slate-500 group-hover:text-rose-400 font-bold">دەسەڵاتی تەواو &rarr;</span>
+              <span className="text-[10px] text-slate-500 group-hover:text-rose-400 font-bold">&rarr;</span>
             </button>
 
             {/* Staff preset */}
@@ -166,9 +201,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-amber-500"></div>
-                <span>ڕۆڵی کارمەند (وردبینیکەر)</span>
+                <span>{t('common.role_staff')} (کارمەند / مساعد)</span>
               </div>
-              <span className="text-[10px] text-slate-500 group-hover:text-amber-400 font-bold">تەنها تۆمارکردن &rarr;</span>
+              <span className="text-[10px] text-slate-500 group-hover:text-amber-400 font-bold">&rarr;</span>
             </button>
 
             {/* Viewer preset */}
@@ -181,9 +216,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-slate-500"></div>
-                <span>ڕۆڵی بینەر (پاڵپشتیکاری دەرەکی)</span>
+                <span>{t('common.role_viewer')} (بینەر / زائر)</span>
               </div>
-              <span className="text-[10px] text-slate-500 group-hover:text-slate-300 font-bold">تەنها بینینی زانیاری &rarr;</span>
+              <span className="text-[10px] text-slate-500 group-hover:text-slate-300 font-bold">&rarr;</span>
             </button>
           </div>
 
@@ -192,7 +227,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </div>
 
       <div className="mt-6 text-slate-500 text-[10px] font-semibold text-center z-10">
-        مێشکی زیرەکی پێوانەکردنی کاریگەری پڕۆژە نیشتمانییەکان © ٢٠٢٦
+        ImpactIQ — {t('login.title')} © 2026
       </div>
 
     </div>

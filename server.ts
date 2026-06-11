@@ -32,38 +32,51 @@ function getGeminiClient(): GoogleGenAI {
   return aiClient;
 }
 
-// API endpoint for Kurdish M&E AI Assistant
+// API endpoint for Kurdish/Arabic/English M&E AI Assistant
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message, context, history } = req.body;
+    const { message, context, history, language } = req.body;
+
+    const langCode = language || 'ckb'; // ckb, ar, en
 
     if (!message) {
-       res.status(400).json({ error: 'پەیام دابین نەکراوە' });
+       const errResponse = langCode === 'en' ? 'Message is required' : langCode === 'ar' ? 'الرسالة مطلوبة' : 'پەیام دابین نەکراوە';
+       res.status(400).json({ error: errResponse });
        return;
     }
 
     const ai = getGeminiClient();
 
-    // Prepare Kurdish contextual knowledge prompt backed strictly by the active data
+    // Prepare translations for backend instructions
+    const fallbackMessageMap = {
+      ckb: 'ئەم زانیارییە لە داتای ئێستادا بەردەست نییە.',
+      ar: 'هذه المعلومات غير متوفرة في البيانات الحالية.',
+      en: 'This information is not available in the current data.'
+    };
+
+    const targetFallback = fallbackMessageMap[langCode as keyof typeof fallbackMessageMap] || fallbackMessageMap.ckb;
+
+    // Prepare contextual knowledge prompt backed strictly by the active data
     const systemInstruction = `
-تۆ یاریدەدەرێکی زیرەکی کوردی سۆرانیت (تارگێتیت تەنیا و تەنیا بە شیکردنەوە و دۆزینەوەی باشترین تێگەیشتن لەسەر چاودێری و هەڵسەنگاندن M&E).
-ناوی تۆ: "مێشکی زیرەکی پیشاندەر"ە.
-پێویستە بە زمانی کوردی سۆرانی بە ڕێکوپێکی، بە فەرمی و زۆر بە ڕوونی و سادەیی وەڵام بدەیتەوە.
+You are "ImpactIQ AI Brain" (مێشکی زیرەکی پیشاندەر). You are a highly disciplined expert in Monitoring & Evaluation (M&E) for humanitarian and developmental projects.
 
-لێرەدا لیستی تەواوی داتای ئێستای سیستەمەکە هەیە کە بە فەرمی تۆمارکراوە:
-- پڕۆژە دۆکیومێنتەکان: ${JSON.stringify(context?.projects || [])}
-- زانیاری سوودمەندان: ${JSON.stringify(context?.beneficiaries || [])}
-- تۆماری کاریگەری پڕۆژە متمانەپێکراوەکان: ${JSON.stringify(context?.impactLogs || [])}
-- ڕاپۆرتەکانی هەڵسەنگاندن: ${JSON.stringify(context?.reports || [])}
+Your specific target language for the reply is: ${langCode === 'en' ? 'English (en)' : langCode === 'ar' ? 'Arabic (ar)' : 'Kurdish Sorani (ckb)'}.
+You must compose your entire reply in that target language. Use professional, polite, and clean terminology suitable for international organizations (like UN, NGOs, USAID).
 
-یاسا توندەکان بۆ وەڵامەکانت:
-1. پێویستە تەنیا پشتیوانی بکەیت لەو زانیاریانەی لەم داتایانەی سەرەوە هەن، نابێت بە هیچ شێوازێک زانیاری و ژمارەی خەیاڵی بنووسیت.
-2. ئەگەر پرسیارێک کرا لەسەر داتا یان پڕۆژەیەک کە لەم زانیاریانەی سەرەوەدا بوونی تیا نەبوو یان داتایەکی زۆر گشتی و ناتەواو بوو کە نەمانتوانی بدۆزینەوە، پێویستە بە دروستی و بەبێ هیچ گۆڕانکارییەک بڵێیت:
-"ئەم زانیارییە لە داتای ئێستادا بەردەست نییە."
-3. بە کارهێنەر یارمەتیدەر بە بە شێوەیەکی فەرمی. بۆ هەر پرسیارێکی فۆڕمات نەکراو یان گشتی، تەنیا ڕوونکردنەوەی فەرمی پڕۆژە بنووسە.
-4. بۆ دروستکردنی ڕاپۆرت، کورتەیەکی سەرنجڕاکێش و خاڵ بە خاڵ لەسەر کارامەیی و پێشکەوتنی کار بنووسە.
+Below is the COMPLETE verified dataset currently loaded in the system:
+- Projects list: ${JSON.stringify(context?.projects || [])}
+- Beneficiaries list: ${JSON.stringify(context?.beneficiaries || [])}
+- Verified Impact Logs: ${JSON.stringify(context?.impactLogs || [])}
+- Formulated Evaluation Reports: ${JSON.stringify(context?.reports || [])}
 
-لێرەدا مێژووی گفتوگۆکانی پێشوو هەیە (ئەگەر هەبێت):
+Strict rules for your response:
+1. Grounding requirement: You must respond ONLY based on the verified structures and numbers provided in the dataset above. NEVER assume or invent any fictitious projects, metrics, budgets, or people.
+2. Missing Info / Out of Scope: If the user's question asks for data, statistics, predictions, or parameters that do NOT exist in the provided context, you MUST reply exactly with the following statement and nothing else:
+"${targetFallback}"
+3. Format: Be structured, concise, and professional. Use markdown tables, bullets, or headers where useful to present figures of budgets, success rates, or demographics.
+4. Language Alignment: Ensure RTL direction formatting is maintained conceptually for Kurdish and Arabic with human-friendly headings.
+
+Active conversation history:
 ${JSON.stringify(history || [])}
     `;
 
@@ -73,17 +86,21 @@ ${JSON.stringify(history || [])}
       contents: message,
       config: {
         systemInstruction,
-        temperature: 0.2, // low temperature to ensure strict reliance on data
+        temperature: 0.1, // low temperature to ensure strict reliance on data
       },
     });
 
-    const replyText = response.text || 'ببوورە، وەڵامەکە بەردەست نەبوو.';
+    const replyText = response.text || (langCode === 'en' ? 'No response could be formulated.' : langCode === 'ar' ? 'تعذر صياغة رد مناسب.' : 'ببوورە، وەڵامەکە بەردەست نەبوو.');
     res.json({ reply: replyText });
   } catch (error: any) {
     console.error('Gemini error:', error);
-    res.json({ 
-      reply: `ببوورە، پێوەندی لەگەڵ یاریدەدەری زیرەک لە قۆناغی یەکەم نەکراوە. دەروازەی مێژوویی فایەربەیس و کلیلەکان بە باشی دەستنیشان نەکراون یان کێشەیەکی تەکنیکی هەیە.\n\nکێشە: ${error.message || error}` 
-    });
+    const fallbackErr = req.body.language === 'en' 
+      ? `Unable to connect to the AI core. Error: ${error.message}` 
+      : req.body.language === 'ar' 
+      ? `فشل الاتصال بنظام الذكاء الاصطناعي. الخطأ: ${error.message}`
+      : `ببوورە، پێوەندی لەگەڵ یاریدەدەری زیرەک نەکرا. کێشە: ${error.message || error}`;
+
+    res.json({ reply: fallbackErr });
   }
 });
 

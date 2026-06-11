@@ -5,6 +5,7 @@
 
 import React, { useState } from 'react';
 import { AppProvider, useApp } from './context/AppContext';
+import { LanguageProvider, useLanguage } from './context/LanguageContext';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { DashboardView } from './components/DashboardView';
@@ -17,6 +18,7 @@ import { LoginView } from './components/LoginView';
 
 const MainLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   const { activeTab } = useApp();
+  const { direction, t } = useLanguage();
 
   const renderActiveView = () => {
     switch (activeTab) {
@@ -37,10 +39,12 @@ const MainLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
     }
   };
 
+  const layoutSpacing = direction === 'rtl' ? 'pr-0 lg:pr-80 pl-0' : 'pl-0 lg:pl-80 pr-0';
+
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 pr-0 lg:pr-80 flex flex-col font-sans selection:bg-sky-200">
+    <div className={`min-h-screen bg-slate-50 text-slate-800 ${layoutSpacing} flex flex-col font-sans selection:bg-sky-200`}>
       
-      {/* Sidebar for Navigation on the right (RTL padding) */}
+      {/* Sidebar for Navigation on the right/left depending on RTL/LTR */}
       <Sidebar />
 
       {/* Main Column */}
@@ -54,12 +58,12 @@ const MainLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
           
           {/* Quick logout tab simulation */}
           <div className="flex items-center justify-between no-print bg-white px-5 py-3 rounded-xl border border-slate-200/60 mb-2">
-            <span className="text-xs text-slate-400 font-bold">بەرپرسیارێتی متمانە: هەر دەستکارییەک ڕاستەوخۆ پاشەکەوت دەبێت لە داتای دیمۆ.</span>
+            <span className="text-xs text-slate-400 font-bold">{t('common.trust_warning')}</span>
             <button
               onClick={onLogout}
               className="text-xs text-rose-600 hover:text-rose-700 font-extrabold flex items-center gap-1 transition-all cursor-pointer"
             >
-              <span>دەرچوون لە سیستەم (چوونەژوورە سەرەکی)</span>
+              <span>{t('nav.logout')}</span>
             </button>
           </div>
 
@@ -88,12 +92,14 @@ export default function App() {
   };
 
   return (
-    <AppProvider>
-      {isLoggedIn ? (
-        <MainLayout onLogout={handleLogout} />
-      ) : (
-        <LoginView onLoginSuccess={handleLoginSuccess} />
-      )}
-    </AppProvider>
+    <LanguageProvider>
+      <AppProvider>
+        {isLoggedIn ? (
+          <MainLayout onLogout={handleLogout} />
+        ) : (
+          <LoginView onLoginSuccess={handleLoginSuccess} />
+        )}
+      </AppProvider>
+    </LanguageProvider>
   );
 }
