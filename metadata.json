@@ -1,0 +1,6 @@
+{
+  "name": "مێشکی زیرەکی پێوانەکردن و هەڵسەنگاندنی کاریگەری پڕۆژەکان",
+  "description": "سیستەمی زیرەکی پێوانەکردن و هەڵسەنگاندنی کاریگەری پڕۆژەکان بۆ ڕێکخراوە ناحکومییەکان و دامەزراوە مرۆییەکان",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

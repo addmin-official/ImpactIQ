@@ -1,0 +1,74 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Catch-All Rule: Default Deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Reuseable global helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // Helper to get user profile from /users/$(request.auth.uid)
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    // Checks if the active user is an admin
+    function isAdmin() {
+      return isSignedIn() && getUserData().role == 'admin';
+    }
+
+    // Checks if the active user is a staff member or admin
+    function isStaffOrAdmin() {
+      return isSignedIn() && (getUserData().role == 'staff' || getUserData().role == 'admin');
+    }
+
+    // Checks if the active user is a viewer, staff or admin
+    function isViewerOrAbove() {
+      return isSignedIn() && (
+        getUserData().role == 'viewer' || 
+        getUserData().role == 'staff' || 
+        getUserData().role == 'admin'
+      );
+    }
+
+    // Projects Rule definitions
+    match /projects/{projectId} {
+      allow read: if isViewerOrAbove();
+      allow create, update: if isStaffOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Beneficiaries Rule definitions
+    match /beneficiaries/{beneficiaryId} {
+      allow read: if isViewerOrAbove();
+      allow create, update: if isStaffOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Impact Logs Rule definitions
+    match /impact_logs/{logId} {
+      allow read: if isViewerOrAbove();
+      allow create, update: if isStaffOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Reports Rule definitions
+    match /reports/{reportId} {
+      allow read: if isViewerOrAbove();
+      allow create, update: if isStaffOrAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Users Profiles collections
+    match /users/{userId} {
+      allow read: if isViewerOrAbove();
+      // Only administrators can mutate user roles
+      allow create, update, delete: if isAdmin() || (isSignedIn() && request.auth.uid == userId && getUserData().role == 'viewer');
+    }
+  }
+}

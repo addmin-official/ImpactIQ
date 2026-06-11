@@ -1,0 +1,108 @@
+{
+  "entities": {
+    "Project": {
+      "title": "Project",
+      "description": "Represents a humanitarian project managed by the M&E system",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier of the project" },
+        "name": { "type": "string", "description": "Arabic/Kurdish title of the project" },
+        "description": { "type": "string", "description": "Short summary of project objectives" },
+        "location": { "type": "string", "description": "Governorate or city of implementation" },
+        "status": { "type": "string", "enum": ["planning", "active", "completed", "on_hold"] },
+        "progress": { "type": "number", "description": "Completion rate percentage from 0 to 100" },
+        "budget": { "type": "number", "description": "Allocated budget in USD" },
+        "beneficiariesCount": { "type": "number", "description": "Target or actual count of beneficiaries" },
+        "startDate": { "type": "string", "format": "date" },
+        "endDate": { "type": "string", "format": "date" },
+        "risk": { "type": "string", "enum": ["low", "medium", "high"] },
+        "keyResult": { "type": "string", "description": "Primary outcomes achieved" }
+      },
+      "required": ["id", "name", "location", "status", "progress", "budget", "risk"]
+    },
+    "Beneficiary": {
+      "title": "Beneficiary",
+      "description": "Represents an individual receiving support from a specific project",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier of the beneficiary" },
+        "name": { "type": "string", "description": "Full name of the beneficiary" },
+        "age": { "type": "number", "description": "Age of the beneficiary" },
+        "gender": { "type": "string", "enum": ["male", "female"] },
+        "location": { "type": "string", "description": "Residential location" },
+        "beneficiaryType": { "type": "string", "description": "Type of assistance or category" },
+        "projectId": { "type": "string", "description": "Associated project ID" },
+        "supportStatus": { "type": "string", "enum": ["registered", "receiving_support", "completed"] },
+        "registrationDate": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "name", "age", "gender", "projectId", "supportStatus"]
+    },
+    "ImpactLog": {
+      "title": "ImpactLog",
+      "description": "Quantitative and qualitative measurement of achievement or baseline shift",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "projectId": { "type": "string", "description": "Reference to the project" },
+        "target": { "type": "string", "description": "Target indicator measured" },
+        "preProjectResult": { "type": "string", "description": "Baseline before implementation" },
+        "postProjectResult": { "type": "string", "description": "Value after intervention" },
+        "percentageChange": { "type": "number", "description": "Calculated rate of revision" },
+        "impactScore": { "type": "number", "description": "Score from 1 to 10" },
+        "notes": { "type": "string", "description": "Additional field remarks" }
+      },
+      "required": ["id", "projectId", "target", "impactScore"]
+    },
+    "Report": {
+      "title": "Report",
+      "description": "Formal project status evaluation generated for stakeholders",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "Unique identifier" },
+        "title": { "type": "string", "description": "Title of the report" },
+        "reportType": { "type": "string", "enum": ["annual", "quarterly", "monthly", "evaluation"] },
+        "projectId": { "type": "string", "description": "Referenced project ID" },
+        "executiveSummary": { "type": "string", "description": "Summary of active phase" },
+        "results": { "type": "string", "description": "Key target results" },
+        "impactDescription": { "type": "string", "description": "Narrative of impact" },
+        "recommendations": { "type": "string", "description": "Structured advisements" },
+        "createdAt": { "type": "string", "format": "date" }
+      },
+      "required": ["id", "title", "reportType", "projectId", "createdAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User security credentials and access permissions mapping inside the app",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "description": "User UID from Firebase Auth" },
+        "email": { "type": "string", "description": "Official email address" },
+        "role": { "type": "string", "enum": ["admin", "staff", "viewer"] },
+        "name": { "type": "string", "description": "User visible name" }
+      },
+      "required": ["id", "email", "role", "name"]
+    }
+  },
+  "firestore": {
+    "/projects/{projectId}": {
+      "schema": "Project",
+      "description": "Interventions list collections"
+    },
+    "/beneficiaries/{beneficiaryId}": {
+      "schema": "Beneficiary",
+      "description": "Beneficiaries registered under projects"
+    },
+    "/impact_logs/{logId}": {
+      "schema": "ImpactLog",
+      "description": "Impact measurements and scores"
+    },
+    "/reports/{reportId}": {
+      "schema": "Report",
+      "description": "stakeholder M&E formal reports"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User authorization profile records"
+    }
+  }
+}
