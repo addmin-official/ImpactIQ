@@ -138,10 +138,10 @@ export const AssistantView: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in font-sans h-[calc(100vh-140px)]">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in font-sans h-auto lg:h-[calc(100vh-140px)] pb-6 lg:pb-0">
       
       {/* Middle/Left Chatting Arena */}
-      <div className="lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-full">
+      <div className="lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-[500px] lg:h-full">
         
         {/* Chat Status Bar Header */}
         <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">

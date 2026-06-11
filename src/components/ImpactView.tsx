@@ -338,7 +338,7 @@ export const ImpactView: React.FC = () => {
               </div>
 
               {/* Grid pre vs post */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {/* Pre result */}
                 <div className="space-y-1.5">
@@ -369,7 +369,7 @@ export const ImpactView: React.FC = () => {
               </div>
 
               {/* Percentage Change & Impact rating */}
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 
                 {/* Percentage */}
                 <div className="space-y-1.5">

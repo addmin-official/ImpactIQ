@@ -42,7 +42,7 @@ export const DashboardView: React.FC = () => {
     <div className="space-y-8 animate-fade-in font-sans">
       
       {/* Intro Welcome Banner */}
-      <div className="bg-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/10">
+      <div className="bg-slate-900 rounded-2xl sm:rounded-3xl p-6 sm:p-8 text-white relative overflow-hidden shadow-xl shadow-slate-900/10">
         <div className="absolute top-0 left-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl -translate-x-12 -translate-y-12"></div>
         <div className="absolute bottom-0 right-0 w-80 h-80 bg-teal-500/10 rounded-full blur-3xl translate-x-12 translate-y-12"></div>
         

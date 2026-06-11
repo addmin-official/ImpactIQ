@@ -57,7 +57,7 @@ export const Header: React.FC = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-6">
+      <div className="flex items-center gap-3 sm:gap-6">
         {/* Connection status card */}
         <div className="hidden lg:flex items-center gap-3 bg-emerald-500/5 border border-emerald-500/15 py-1.5 px-3.5 rounded-xl">
           <div className="w-2 h-2 rounded-full bg-emerald-500 animate-ping"></div>
@@ -71,7 +71,7 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Date tracker */}
-        <div className="text-right text-xs text-slate-500 border-l border-slate-200 pl-4 h-9 flex flex-col justify-center">
+        <div className="hidden md:flex text-right text-xs text-slate-500 border-l border-slate-200 pl-4 h-9 flex-col justify-center">
           <div className="flex items-center gap-1.5 justify-end font-semibold text-slate-700">
             <Calendar size={13} className="text-slate-400" />
             <span>١١ی حوزەیرانی ٢٠٢٦</span>
@@ -80,12 +80,12 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Current profile status */}
-        <div className="flex items-center gap-3">
-          <div className="text-right">
+        <div className="flex items-center gap-2.5 sm:gap-3">
+          <div className="hidden sm:block text-right">
             <p className="text-xs font-bold text-slate-800 leading-tight">{currentUser.name}</p>
             <p className="text-[10px] text-slate-500 mt-0.5">{currentUser.email}</p>
           </div>
-          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold relative">
+          <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold relative shrink-0">
             <User size={20} className="text-slate-500" />
             <span className="absolute -bottom-1 -left-1">
               {getRoleBadge(currentUser.role)}

@@ -50,7 +50,7 @@ const MainLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
         <Header />
 
         {/* Dynamic content padding block */}
-        <main className="flex-1 p-8 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
+        <main className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto max-w-7xl w-full mx-auto space-y-6">
           
           {/* Quick logout tab simulation */}
           <div className="flex items-center justify-between no-print bg-white px-5 py-3 rounded-xl border border-slate-200/60 mb-2">

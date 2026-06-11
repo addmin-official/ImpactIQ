@@ -44,7 +44,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       <div className="absolute top-0 left-0 w-96 h-96 bg-sky-500/10 rounded-full blur-3xl -translate-x-12 -translate-y-12"></div>
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl translate-x-12 translate-y-12"></div>
 
-      <div className="z-10 w-full max-w-md bg-slate-950 border border-slate-800 p-8 rounded-3xl shadow-2xl space-y-6 text-white">
+      <div className="z-10 w-full max-w-md bg-slate-950 border border-slate-800 p-6 sm:p-8 rounded-2xl sm:rounded-3xl shadow-2xl space-y-6 text-white">
         
         {/* Brand visual header */}
         <div className="text-center space-y-3">
