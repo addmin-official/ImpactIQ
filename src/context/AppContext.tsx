@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { Project, Beneficiary, ImpactLog, Report, UserProfile, UserRole, ChatMessage } from '../types';
+import { Project, Beneficiary, ImpactLog, Report, UserProfile, UserRole } from '../types';
 import {
   INITIAL_PROJECTS,
   INITIAL_BENEFICIARIES,
@@ -7,6 +7,22 @@ import {
   INITIAL_REPORTS,
   INITIAL_USERS
 } from '../mockData';
+
+// Services
+import { projectService } from '../services/projectService';
+import { beneficiaryService } from '../services/beneficiaryService';
+import { impactService } from '../services/impactService';
+import { reportService } from '../services/reportService';
+import { userService } from '../services/userService';
+
+// Firebase core & auth
+import { auth, hasFirebaseConfig } from '../firebase';
+import { 
+  signInWithEmailAndPassword, 
+  createUserWithEmailAndPassword, 
+  signOut, 
+  onAuthStateChanged 
+} from 'firebase/auth';
 
 interface AppContextType {
   projects: Project[];
@@ -45,6 +61,12 @@ interface AppContextType {
   canWrite: () => boolean;
   canDelete: () => boolean;
   isAdmin: () => boolean;
+
+  // Firebase auth & config attributes
+  hasFirebase: boolean;
+  loginWithEmail: (email: string, password: string) => Promise<boolean>;
+  logout: () => Promise<void>;
+  isAuthLoading: boolean;
 }
 
 const AppContext = createContext<AppContextType | undefined>(undefined);
@@ -54,9 +76,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [beneficiaries, setBeneficiaries] = useState<Beneficiary[]>([]);
   const [impactLogs, setImpactLogs] = useState<ImpactLog[]>([]);
   const [reports, setReports] = useState<Report[]>([]);
-  const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USERS[0]); // default to Admin
+  const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USERS[0]); // Default to Admin
   const [activeTab, setActiveTab2] = useState<string>('dashboard');
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [isAuthLoading, setIsAuthLoading] = useState<boolean>(false);
+  const [availableUsers, setAvailableUsers] = useState<UserProfile[]>(INITIAL_USERS);
 
   // Trigger scroll to top on tab change for clean feel
   const setActiveTab = (tab: string) => {
@@ -65,67 +89,162 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setIsSidebarOpen(false);
   };
 
-  // Load from local storage or set initial mock data
+  // 1. Setup Auth state listeners (if Firebase is enabled)
   useEffect(() => {
-    const savedProjects = localStorage.getItem('mne_projects');
-    const savedBeneficiaries = localStorage.getItem('mne_beneficiaries');
-    const savedImpactLogs = localStorage.getItem('mne_impact_logs');
-    const savedReports = localStorage.getItem('mne_reports');
-    const savedUser = localStorage.getItem('mne_current_user');
-
-    if (savedProjects) setProjects(JSON.parse(savedProjects));
-    else {
-      setProjects(INITIAL_PROJECTS);
-      localStorage.setItem('mne_projects', JSON.stringify(INITIAL_PROJECTS));
+    if (hasFirebaseConfig && auth) {
+      setIsAuthLoading(true);
+      const unsubscribe = onAuthStateChanged(auth, async (user) => {
+        try {
+          if (user) {
+            // Attempt to load profile from firestore
+            const profile = await userService.getUserProfile(user.uid);
+            if (profile) {
+              setCurrentUser(profile);
+            } else {
+              // Create default profile for the registered user
+              const fallbackProfile: UserProfile = {
+                id: user.uid,
+                email: user.email || '',
+                name: user.email?.split('@')[0] || 'بەکارهێنەر',
+                role: 'viewer'
+              };
+              await userService.saveUserProfile(user.uid, fallbackProfile);
+              setCurrentUser(fallbackProfile);
+            }
+          } else {
+            // Local fallback if logged out
+            const savedUser = localStorage.getItem('mne_current_user');
+            if (savedUser) {
+              setCurrentUser(JSON.parse(savedUser));
+            } else {
+              setCurrentUser(INITIAL_USERS[0]);
+            }
+          }
+        } catch (err) {
+          console.error("Auth state listener profile resolution error:", err);
+        } finally {
+          setIsAuthLoading(false);
+        }
+      });
+      return unsubscribe;
     }
+  }, [auth]);
 
-    if (savedBeneficiaries) setBeneficiaries(JSON.parse(savedBeneficiaries));
-    else {
-      setBeneficiaries(INITIAL_BENEFICIARIES);
-      localStorage.setItem('mne_beneficiaries', JSON.stringify(INITIAL_BENEFICIARIES));
+  // 2. Fetch dataset on mount or auth load state changes
+  useEffect(() => {
+    async function fetchDashboardCollection() {
+      try {
+        const projs = await projectService.getProjects();
+        setProjects(projs);
+        const bens = await beneficiaryService.getBeneficiaries();
+        setBeneficiaries(bens);
+        const logs = await impactService.getImpactLogs();
+        setImpactLogs(logs);
+        const reps = await reportService.getReports();
+        setReports(reps);
+
+        // Fetch official users from database if available
+        const users = await userService.getAllUserProfiles();
+        if (users && users.length > 0) {
+          setAvailableUsers(users);
+        }
+      } catch (err) {
+        console.error("Error loading M&E collections from service layer:", err);
+      }
     }
+    fetchDashboardCollection();
+  }, [currentUser]);
 
-    if (savedImpactLogs) setImpactLogs(JSON.parse(savedImpactLogs));
-    else {
-      setImpactLogs(INITIAL_IMPACT_LOGS);
-      localStorage.setItem('mne_impact_logs', JSON.stringify(INITIAL_IMPACT_LOGS));
+  // Firebase Email/Password SignIn Action
+  const loginWithEmail = async (emailStr: string, passwordStr: string): Promise<boolean> => {
+    if (hasFirebaseConfig && auth) {
+      try {
+        setIsAuthLoading(true);
+        const response = await signInWithEmailAndPassword(auth, emailStr, passwordStr);
+        const uid = response.user.uid;
+        
+        let profile = await userService.getUserProfile(uid);
+        if (!profile) {
+          // Fallback to viewer role inside database
+          profile = {
+            id: uid,
+            email: emailStr,
+            name: emailStr.split('@')[0],
+            role: 'viewer'
+          };
+          await userService.saveUserProfile(uid, profile);
+        }
+        setCurrentUser(profile);
+        return true;
+      } catch (error) {
+        console.error("Firebase Login Error:", error);
+        throw error;
+      } finally {
+        setIsAuthLoading(false);
+      }
+    } else {
+      // Local check
+      const matched = INITIAL_USERS.find(u => u.email.toLowerCase() === emailStr.toLowerCase());
+      if (matched) {
+        setCurrentUser(matched);
+        localStorage.setItem('mne_current_user', JSON.stringify(matched));
+        return true;
+      }
+      return false;
     }
-
-    if (savedReports) setReports(JSON.parse(savedReports));
-    else {
-      setReports(INITIAL_REPORTS);
-      localStorage.setItem('mne_reports', JSON.stringify(INITIAL_REPORTS));
-    }
-
-    if (savedUser) {
-      setCurrentUser(JSON.parse(savedUser));
-    }
-  }, []);
-
-  // Sync to local storage on changes
-  const saveProjects = (newProjects: Project[]) => {
-    setProjects(newProjects);
-    localStorage.setItem('mne_projects', JSON.stringify(newProjects));
   };
 
-  const saveBeneficiaries = (newBens: Beneficiary[]) => {
-    setBeneficiaries(newBens);
-    localStorage.setItem('mne_beneficiaries', JSON.stringify(newBens));
+  // Logout Action
+  const logout = async () => {
+    if (hasFirebaseConfig && auth) {
+      await signOut(auth);
+    }
+    setCurrentUser(INITIAL_USERS[0]);
+    localStorage.removeItem('mne_current_user');
   };
 
-  const saveImpactLogs = (newLogs: ImpactLog[]) => {
-    setImpactLogs(newLogs);
-    localStorage.setItem('mne_impact_logs', JSON.stringify(newLogs));
-  };
+  // Switch profiles (essential for sandbox demo sandbox role tests)
+  const switchUser = async (userId: string) => {
+    const targetUser = INITIAL_USERS.find(u => u.id === userId) || availableUsers.find(u => u.id === userId);
+    if (!targetUser) return;
 
-  const saveReports = (newReports: Report[]) => {
-    setReports(newReports);
-    localStorage.setItem('mne_reports', JSON.stringify(newReports));
-  };
+    if (hasFirebaseConfig && auth) {
+      try {
+        setIsAuthLoading(true);
+        const email = targetUser.email;
+        const password = "Password123";
 
-  const switchUser = (userId: string) => {
-    const targetUser = INITIAL_USERS.find(u => u.id === userId);
-    if (targetUser) {
+        try {
+          // Attempt sign in
+          await signInWithEmailAndPassword(auth, email, password);
+        } catch (err: any) {
+          // Auto create user if missing in Authentication
+          if (
+            err.code === 'auth/user-not-found' || 
+            err.code === 'auth/invalid-credential' || 
+            err.code === 'auth/user-disabled' ||
+            err.code === 'auth/invalid-email'
+          ) {
+            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            const uid = userCredential.user.uid;
+            
+            // Sync with Firestore profile users db
+            await userService.saveUserProfile(uid, {
+              name: targetUser.name,
+              email: targetUser.email,
+              role: targetUser.role
+            });
+          } else {
+            throw err;
+          }
+        }
+      } catch (err) {
+        console.error("Firebase quick profile switch simulation error:", err);
+      } finally {
+        setIsAuthLoading(false);
+      }
+    } else {
+      // Local simple offline fallback
       setCurrentUser(targetUser);
       localStorage.setItem('mne_current_user', JSON.stringify(targetUser));
     }
@@ -147,40 +266,59 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // ----- Projects Actions -----
   const addProject = (projectData: Omit<Project, 'id'>) => {
     if (!canWrite()) return false;
-    const newProject: Project = {
-      ...projectData,
-      id: `project-${Date.now()}`
-    };
-    const updated = [newProject, ...projects];
-    saveProjects(updated);
+    const newId = `project-${Date.now()}`;
+    const newDoc: Project = { id: newId, ...projectData };
+    
+    // Optimistic Local State Update
+    setProjects(prev => [newDoc, ...prev]);
+    
+    // Background Service Async Sync
+    projectService.addProject(projectData, newId).catch(err => {
+      console.error("Async project creation error:", err);
+    });
     return true;
   };
 
   const updateProject = (projectData: Project) => {
     if (!canWrite()) return false;
-    const updated = projects.map(p => p.id === projectData.id ? projectData : p);
-    saveProjects(updated);
+    
+    // Optimistic Update
+    setProjects(prev => prev.map(p => p.id === projectData.id ? projectData : p));
+    
+    // Background execution
+    projectService.updateProject(projectData).catch(err => {
+      console.error("Async project update validation error:", err);
+    });
     return true;
   };
 
   const deleteProject = (id: string) => {
     if (!canDelete()) return false;
-    const updated = projects.filter(p => p.id !== id);
-    saveProjects(updated);
+    
+    // Optimistic Update
+    setProjects(prev => prev.filter(p => p.id !== id));
+    
+    // Background sync
+    projectService.deleteProject(id).catch(err => {
+      console.error("Async project deletion error:", err);
+    });
     return true;
   };
 
   // ----- Beneficiaries Actions -----
   const addBeneficiary = (beneficiaryData: Omit<Beneficiary, 'id'>) => {
     if (!canWrite()) return false;
-    const newBen: Beneficiary = {
-      ...beneficiaryData,
-      id: `beneficiary-${Date.now()}`
-    };
-    const updated = [newBen, ...beneficiaries];
-    saveBeneficiaries(updated);
-    
-    // Auto-update beneficiaries count on associated project
+    const newId = `beneficiary-${Date.now()}`;
+    const newDoc: Beneficiary = { id: newId, ...beneficiaryData };
+
+    setBeneficiaries(prev => [newDoc, ...prev]);
+
+    // Async service sync
+    beneficiaryService.addBeneficiary(beneficiaryData, newId).catch(err => {
+      console.error("Async beneficiary creation error:", err);
+    });
+
+    // Auto-update stats count on associated project in background
     const associatedProj = projects.find(p => p.id === beneficiaryData.projectId);
     if (associatedProj) {
       updateProject({
@@ -188,21 +326,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         beneficiariesCount: associatedProj.beneficiariesCount + 1
       });
     }
-
     return true;
   };
 
   const updateBeneficiary = (beneficiaryData: Beneficiary) => {
     if (!canWrite()) return false;
     
-    // Find old to handle counts correctly
     const oldBen = beneficiaries.find(b => b.id === beneficiaryData.id);
-    const updated = beneficiaries.map(b => b.id === beneficiaryData.id ? beneficiaryData : b);
-    saveBeneficiaries(updated);
+    setBeneficiaries(prev => prev.map(b => b.id === beneficiaryData.id ? beneficiaryData : b));
     
-    // Handle project id shifts
+    beneficiaryService.updateBeneficiary(beneficiaryData).catch(err => {
+      console.error("Async beneficiary update error:", err);
+    });
+
+    // Handle project count shifts
     if (oldBen && oldBen.projectId !== beneficiaryData.projectId) {
-      // Decrease old count
       const oldProj = projects.find(p => p.id === oldBen.projectId);
       if (oldProj) {
         updateProject({
@@ -210,7 +348,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           beneficiariesCount: Math.max(0, oldProj.beneficiariesCount - 1)
         });
       }
-      // Increase new count
       const newProj = projects.find(p => p.id === beneficiaryData.projectId);
       if (newProj) {
         updateProject({
@@ -219,15 +356,17 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         });
       }
     }
-
     return true;
   };
 
   const deleteBeneficiary = (id: string) => {
     if (!canDelete()) return false;
     const oldBen = beneficiaries.find(b => b.id === id);
-    const updated = beneficiaries.filter(b => b.id !== id);
-    saveBeneficiaries(updated);
+    setBeneficiaries(prev => prev.filter(b => b.id !== id));
+
+    beneficiaryService.deleteBeneficiary(id).catch(err => {
+      console.error("Async beneficiary deletion error:", err);
+    });
 
     if (oldBen) {
       const associatedProj = projects.find(p => p.id === oldBen.projectId);
@@ -244,52 +383,72 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // ----- Impact Logs Actions -----
   const addImpactLog = (logData: Omit<ImpactLog, 'id'>) => {
     if (!canWrite()) return false;
-    const newLog: ImpactLog = {
-      ...logData,
-      id: `impact-${Date.now()}`
-    };
-    const updated = [newLog, ...impactLogs];
-    saveImpactLogs(updated);
+    const newId = `impact-${Date.now()}`;
+    const newDoc: ImpactLog = { id: newId, ...logData };
+
+    setImpactLogs(prev => [newDoc, ...prev]);
+
+    impactService.addImpactLog(logData, newId).catch(err => {
+      console.error("Async impact log creation error:", err);
+    });
     return true;
   };
 
   const updateImpactLog = (logData: ImpactLog) => {
     if (!canWrite()) return false;
-    const updated = impactLogs.map(l => l.id === logData.id ? logData : l);
-    saveImpactLogs(updated);
+    
+    setImpactLogs(prev => prev.map(l => l.id === logData.id ? logData : l));
+
+    impactService.updateImpactLog(logData).catch(err => {
+      console.error("Async impact log update error:", err);
+    });
     return true;
   };
 
   const deleteImpactLog = (id: string) => {
     if (!canDelete()) return false;
-    const updated = impactLogs.filter(l => l.id !== id);
-    saveImpactLogs(updated);
+    
+    setImpactLogs(prev => prev.filter(l => l.id !== id));
+
+    impactService.deleteImpactLog(id).catch(err => {
+      console.error("Async impact log deletion error:", err);
+    });
     return true;
   };
 
   // ----- Reports Actions -----
   const addReport = (reportData: Omit<Report, 'id'>) => {
     if (!canWrite()) return false;
-    const newReport: Report = {
-      ...reportData,
-      id: `report-${Date.now()}`
-    };
-    const updated = [newReport, ...reports];
-    saveReports(updated);
+    const newId = `report-${Date.now()}`;
+    const newDoc: Report = { id: newId, ...reportData };
+
+    setReports(prev => [newDoc, ...prev]);
+
+    reportService.addReport(reportData, newId).catch(err => {
+      console.error("Async report creation error:", err);
+    });
     return true;
   };
 
   const updateReport = (reportData: Report) => {
     if (!canWrite()) return false;
-    const updated = reports.map(r => r.id === reportData.id ? reportData : r);
-    saveReports(updated);
+    
+    setReports(prev => prev.map(r => r.id === reportData.id ? reportData : r));
+
+    reportService.updateReport(reportData).catch(err => {
+      console.error("Async report update error:", err);
+    });
     return true;
   };
 
   const deleteReport = (id: string) => {
     if (!canDelete()) return false;
-    const updated = reports.filter(r => r.id !== id);
-    saveReports(updated);
+    
+    setReports(prev => prev.filter(r => r.id !== id));
+
+    reportService.deleteReport(id).catch(err => {
+      console.error("Async report deletion error:", err);
+    });
     return true;
   };
 
@@ -301,7 +460,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         impactLogs,
         reports,
         currentUser,
-        availableUsers: INITIAL_USERS,
+        availableUsers,
         activeTab,
         setActiveTab,
         switchUser,
@@ -321,7 +480,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         deleteReport,
         canWrite,
         canDelete,
-        isAdmin
+        isAdmin,
+        hasFirebase: hasFirebaseConfig,
+        loginWithEmail,
+        logout,
+        isAuthLoading
       }}
     >
       {children}

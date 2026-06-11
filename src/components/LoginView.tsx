@@ -1,20 +1,21 @@
 import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { INITIAL_USERS } from '../mockData';
-import { ShieldCheck, Mail, Lock, LogIn, Award, Eye } from 'lucide-react';
+import { ShieldCheck, Mail, Lock, LogIn, Loader2 } from 'lucide-react';
 
 interface LoginViewProps {
   onLoginSuccess: () => void;
 }
 
 export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
-  const { switchUser } = useApp();
+  const { switchUser, loginWithEmail, isAuthLoading } = useApp();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [validationError, setValidationError] = useState('');
 
-  const handleCustomLoginSubmit = (e: React.FormEvent) => {
+  const handleCustomLoginSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (isAuthLoading) return;
     setValidationError('');
 
     if (!email) {
@@ -22,19 +23,32 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       return;
     }
 
-    // Lookup user in mock profiles
-    const matched = INITIAL_USERS.find(u => u.email.toLowerCase() === email.toLowerCase());
-    if (matched) {
-      switchUser(matched.id);
-      onLoginSuccess();
-    } else {
-      setValidationError('ئەم ئیمەیڵە تۆمار نەکراوە. دەتوانیت لە ڕێگەی دوگمە ئامادەکانەوە تاقیکردنەوە بکەیت.');
+    try {
+      const pass = password || 'Password123';
+      const success = await loginWithEmail(email, pass);
+      if (success) {
+        onLoginSuccess();
+      } else {
+        setValidationError('ئەم ئیمەیڵە تۆمار نەکراوە. دەتوانیت لە ڕێگەی دوگمە ئامادەکانەوە تاقیکردنەوە بکەیت.');
+      }
+    } catch (err: any) {
+      console.error(err);
+      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-email') {
+        setValidationError('زانیارییەکانت هەڵەیە. دڵنیابە لە نووسینی زانیاری دروست.');
+      } else {
+        setValidationError('هەڵەیەک ڕوویدا لە کاتی پەيوەستبوون بە سێرڤەر. دڵنیابەرەوە لە هێڵی ئینتەرنێتەکەت.');
+      }
     }
   };
 
-  const handlePresetLogin = (userId: string) => {
-    switchUser(userId);
-    onLoginSuccess();
+  const handlePresetLogin = async (userId: string) => {
+    if (isAuthLoading) return;
+    try {
+      await switchUser(userId);
+      onLoginSuccess();
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -76,6 +90,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 type="email"
                 placeholder="email@mne.org"
                 value={email}
+                disabled={isAuthLoading}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 pl-4 pr-10 text-xs font-medium text-slate-200 outline-none transition-colors"
                 required
@@ -83,7 +98,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             </div>
           </div>
 
-          {/* Password (simulation) */}
+          {/* Password */}
           <div className="space-y-1.5">
             <label className="text-xs font-bold text-slate-300 block">وینەی تێپەڕەوشە (نهێنی)</label>
             <div className="relative">
@@ -93,6 +108,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
                 type="password"
                 placeholder="••••••••"
                 value={password}
+                disabled={isAuthLoading}
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full bg-slate-900 border border-slate-800 focus:border-sky-500 rounded-xl py-3 pl-4 pr-10 text-xs font-medium text-slate-200 outline-none transition-colors"
               />
@@ -102,15 +118,25 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <button
             id="btn-login"
             type="submit"
-            className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-md shadow-sky-600/10 flex items-center justify-center gap-2 cursor-pointer"
+            disabled={isAuthLoading}
+            className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-extrabold text-xs rounded-xl transition-all shadow-md shadow-sky-600/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
           >
-            <span>چوونەژوورەوە</span>
-            <LogIn size={14} />
+            {isAuthLoading ? (
+              <>
+                <span>کەمێک چاوەڕوان بە...</span>
+                <Loader2 size={14} className="animate-spin" />
+              </>
+            ) : (
+              <>
+                <span>چوونەژوورەوە</span>
+                <LogIn size={14} />
+              </>
+            )}
           </button>
 
         </form>
 
-        {/* Sandbox fast-connector buttons (essential for testing multiple security role behaviors) */}
+        {/* Sandbox fast-connector buttons */}
         <div className="pt-4 border-t border-slate-800 space-y-3">
           <p className="text-[10px] font-bold text-slate-400 text-center">تاقیکردنەوەی خێرا بە ڕۆڵە جیاوازەکان (تەنیا بە یەک لێدان):</p>
           
@@ -119,8 +145,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <button
               id="preset-login-admin"
               type="button"
+              disabled={isAuthLoading}
               onClick={() => handlePresetLogin('user-admin')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-rose-500/30 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer"
+              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-rose-500/30 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer disabled:opacity-50"
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-rose-500"></div>
@@ -133,8 +160,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <button
               id="preset-login-staff"
               type="button"
+              disabled={isAuthLoading}
               onClick={() => handlePresetLogin('user-staff')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-amber-500/30 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer"
+              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-amber-500/30 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer disabled:opacity-50"
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-amber-500"></div>
@@ -147,11 +175,12 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
             <button
               id="preset-login-viewer"
               type="button"
+              disabled={isAuthLoading}
               onClick={() => handlePresetLogin('user-viewer')}
-              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer"
+              className="p-2.5 bg-slate-900 border border-slate-800 hover:border-slate-700 text-right rounded-xl text-xs text-slate-300 hover:text-white transition-all flex items-center justify-between group cursor-pointer disabled:opacity-50"
             >
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 rounded-full bg-slate-550"></div>
+                <div className="w-2 h-2 rounded-full bg-slate-500"></div>
                 <span>ڕۆڵی بینەر (پاڵپشتیکاری دەرەکی)</span>
               </div>
               <span className="text-[10px] text-slate-500 group-hover:text-slate-300 font-bold">تەنها بینینی زانیاری &rarr;</span>
@@ -162,7 +191,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
 
       </div>
 
-      <div className="mt-6 text-slate-550 text-[10px] font-semibold text-center z-10">
+      <div className="mt-6 text-slate-500 text-[10px] font-semibold text-center z-10">
         مێشکی زیرەکی پێوانەکردنی کاریگەری پڕۆژە نیشتمانییەکان © ٢٠٢٦
       </div>
 
