@@ -40,6 +40,10 @@
   --color-app-accent-strong: var(--app-accent-strong);
 }
 
+html, body, #root {
+  min-height: 100%;
+}
+
 html, body {
   font-family: var(--font-sans);
   background-color: var(--app-bg);
