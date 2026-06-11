@@ -1,20 +1,55 @@
 @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+:root {
+  --app-bg: #f8fafc;
+  --app-surface: #ffffff;
+  --app-surface-soft: #f1f5f9;
+  --app-text: #0f172a;
+  --app-text-secondary: #475569;
+  --app-text-muted: #64748b;
+  --app-border: #cbd5e1;
+  --app-accent: #f59e0b;
+  --app-accent-strong: #d97706;
+}
+
+.dark {
+  --app-bg: #090d16;
+  --app-surface: #0f172a;
+  --app-surface-soft: #1e293b;
+  --app-text: #cbd5e1;
+  --app-text-secondary: #cbd5e1;
+  --app-text-muted: #94a3b8;
+  --app-border: #334155;
+  --app-accent: #f59e0b;
+  --app-accent-strong: #fbbf24;
+}
+
 @theme {
   --font-sans: "Vazirmatn", "Inter", system-ui, -apple-system, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
+  
+  --color-app-bg: var(--app-bg);
+  --color-app-surface: var(--app-surface);
+  --color-app-surface-soft: var(--app-surface-soft);
+  --color-app-text: var(--app-text);
+  --color-app-text-secondary: var(--app-text-secondary);
+  --color-app-text-muted: var(--app-text-muted);
+  --color-app-border: var(--app-border);
+  --color-app-accent: var(--app-accent);
+  --color-app-accent-strong: var(--app-accent-strong);
 }
 
 html, body {
   font-family: var(--font-sans);
   direction: rtl;
   text-align: right;
-  background-color: #f8fafc;
-  color: #0f172a;
+  background-color: var(--app-bg);
+  color: var(--app-text);
   overflow-x: hidden;
   max-width: 100vw;
   width: 100%;
+  transition: background-color 200ms, color 200ms;
 }
 
 /* Custom modern scrollbars */
@@ -95,4 +130,94 @@ html, body {
   transform: translateY(0);
   transition: opacity 300ms, transform 300ms;
 }
+
+/* -------------------------------------------------------------
+   COMPREHENSIVE DARK MODE OVERRIDES (Dynamic layout-wide mappings)
+   ------------------------------------------------------------- */
+html.dark,
+html.dark body {
+  background-color: var(--app-bg) !important;
+  color: var(--app-text) !important;
+}
+
+/* White background containers transition to card surface */
+html.dark .bg-white {
+  background-color: var(--app-surface) !important;
+}
+
+/* Slate grey containers transition to soft elevated surface */
+html.dark .bg-slate-50,
+html.dark .bg-slate-100,
+html.dark .bg-slate-50\/80,
+html.dark .bg-slate-100\/90 {
+  background-color: var(--app-surface-soft) !important;
+}
+
+/* Table responsive details overlay */
+html.dark .table-responsive-wrapper {
+  background-color: var(--app-surface) !important;
+  border-color: var(--app-border) !important;
+}
+
+/* Table heads transitions */
+html.dark .bg-slate-50\/75,
+html.dark thead {
+  background-color: var(--app-surface-soft) !important;
+}
+
+/* Divider lines, borders mapping */
+html.dark .border,
+html.dark .border-b,
+html.dark .border-t,
+html.dark .border-l,
+html.dark .border-r,
+html.dark .border-slate-200,
+html.dark .border-slate-200\/80,
+html.dark .border-slate-100,
+html.dark .border-slate-300,
+html.dark .divide-y > :not([hidden]) ~ :not([hidden]) {
+  border-color: var(--app-border) !important;
+}
+
+/* Standard native inputs and dropdown fields */
+html.dark input,
+html.dark select,
+html.dark textarea {
+  background-color: var(--app-surface-soft) !important;
+  color: var(--app-text) !important;
+  border-color: var(--app-border) !important;
+}
+
+html.dark option {
+  background-color: var(--app-surface) !important;
+  color: var(--app-text) !important;
+}
+
+/* Standard text classes (Primary) */
+html.dark .text-slate-900,
+html.dark .text-slate-800,
+html.dark .text-slate-700 {
+  color: var(--app-text) !important;
+}
+
+/* Standard text classes (Secondary) */
+html.dark .text-slate-600,
+html.dark .text-slate-500 {
+  color: var(--app-text-secondary) !important;
+}
+
+/* Standard text classes (Muted) */
+html.dark .text-slate-400 {
+  color: var(--app-text-muted) !important;
+}
+
+/* Sidebar lists helper highlights and hovering states */
+html.dark .hover\:bg-slate-50:hover {
+  background-color: var(--app-surface-soft) !important;
+}
+
+html.dark .bg-slate-850 {
+  background-color: var(--app-surface-soft) !important;
+}
+
 

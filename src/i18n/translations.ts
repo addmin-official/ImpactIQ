@@ -21,6 +21,13 @@ export interface TranslationDictionary {
     login_as: string;
     switch_to: string;
     error_invalid: string;
+    appName: string;
+    chooseLanguage: string;
+    continue: string;
+    adminDemo: string;
+    staffDemo: string;
+    viewerDemo: string;
+    platformDesc: string;
   };
   dashboard: {
     stats_projects: string;
@@ -156,6 +163,9 @@ export interface TranslationDictionary {
     no: string;
     confirm: string;
     error_occurred: string;
+    theme_dark: string;
+    theme_light: string;
+    theme_toggle: string;
   };
 }
 
@@ -181,6 +191,13 @@ export const translations: Record<Language, TranslationDictionary> = {
       login_as: 'چوونەژوورەوە وەک',
       switch_to: 'گۆڕین بۆ',
       error_invalid: 'ئیمەیڵ یان وشەی تێپەڕ هەڵەیە، تکایە دووبارە تاقیبکەرەوە.',
+      appName: 'ImpactIQ',
+      chooseLanguage: 'زمان هەڵبژێرە',
+      continue: 'بەردەوام بە',
+      adminDemo: 'دیمۆی بەڕێوەبەر',
+      staffDemo: 'دیمۆی کارمەند',
+      viewerDemo: 'دیمۆی بینەر',
+      platformDesc: 'پلاتفۆرمێکی زیرەک بۆ ڕاپۆرتسازی، سوودمەندان و پێوانەکردنی کاریگەری',
     },
     dashboard: {
       stats_projects: 'پڕۆژە دەستنیشانکراوەکان',
@@ -316,6 +333,9 @@ export const translations: Record<Language, TranslationDictionary> = {
       no: 'نەخێر',
       confirm: 'تەئکیدکردنەوە',
       error_occurred: 'هەڵەیەک ڕوویدا لە کاتی پەیوەندی کردن بە سێرڤەر.',
+      theme_dark: 'دۆخی تاریک',
+      theme_light: 'دۆخی ڕوون',
+      theme_toggle: 'گۆڕینی دۆخی ڕەنگ',
     },
   },
   ar: {
@@ -339,6 +359,13 @@ export const translations: Record<Language, TranslationDictionary> = {
       login_as: 'تسجيل الدخول بصفة',
       switch_to: 'التبديل إلى',
       error_invalid: 'البريد الإلكتروني أو كلمة المرور غير صحيحة، يرجى المحاولة مرة أخرى.',
+      appName: 'ImpactIQ',
+      chooseLanguage: 'اختر اللغة',
+      continue: 'المتابعة',
+      adminDemo: 'عرض المدير',
+      staffDemo: 'عرض الموظف',
+      viewerDemo: 'عرض المشاهد',
+      platformDesc: 'منصة ذكية للتقارير والمستفيدين وقياس الأثر',
     },
     dashboard: {
       stats_projects: 'المشاريع المسجلة',
@@ -474,6 +501,9 @@ export const translations: Record<Language, TranslationDictionary> = {
       no: 'لا',
       confirm: 'تأكيد العملية',
       error_occurred: 'حدث خطأ أثناء محاولة الاتصال بالخادم.',
+      theme_dark: 'الوضع الداكن',
+      theme_light: 'الوضع الفاتح',
+      theme_toggle: 'تغيير المظهر',
     },
   },
   en: {
@@ -497,6 +527,13 @@ export const translations: Record<Language, TranslationDictionary> = {
       login_as: 'Sign in as',
       switch_to: 'Switch to',
       error_invalid: 'Invalid email address or passcode. Please check and retry.',
+      appName: 'ImpactIQ',
+      chooseLanguage: 'Choose language',
+      continue: 'Continue',
+      adminDemo: 'Admin demo',
+      staffDemo: 'Staff demo',
+      viewerDemo: 'Viewer demo',
+      platformDesc: 'An intelligent platform for reporting, beneficiaries, and impact measurement',
     },
     dashboard: {
       stats_projects: 'Registered Projects',
@@ -632,6 +669,9 @@ export const translations: Record<Language, TranslationDictionary> = {
       no: 'No',
       confirm: 'Assert Transaction',
       error_occurred: 'An error occurred establishing contact with the secure backend.',
+      theme_dark: 'Dark mode',
+      theme_light: 'Light mode',
+      theme_toggle: 'Toggle theme',
     },
   },
 };
