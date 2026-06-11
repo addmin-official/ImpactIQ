@@ -232,4 +232,41 @@ html.dark .bg-slate-850 {
   background-color: var(--app-surface-soft) !important;
 }
 
+/* ChatGPT-style scrollbar design */
+.scrollbar-chatgpt {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
+}
+
+.scrollbar-chatgpt::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-chatgpt::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-chatgpt::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45);
+  border-radius: 999px;
+}
+
+.scrollbar-chatgpt::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.7);
+}
+
+html.dark .scrollbar-chatgpt {
+  scrollbar-color: rgba(100, 116, 139, 0.55) transparent;
+}
+
+html.dark .scrollbar-chatgpt::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.55);
+}
+
+html.dark .scrollbar-chatgpt::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.75);
+}
+
+
 
