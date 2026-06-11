@@ -238,6 +238,15 @@ html.dark .bg-slate-850 {
   scrollbar-color: rgba(148, 163, 184, 0.45) transparent;
 }
 
+body.sidebar-open {
+  overflow: hidden !important;
+  touch-action: none;
+}
+
+html.sidebar-open {
+  overflow: hidden !important;
+}
+
 .scrollbar-chatgpt::-webkit-scrollbar {
   width: 6px;
   height: 6px;

@@ -17,7 +17,14 @@ export const Sidebar: React.FC = () => {
   const { direction, language, t } = useLanguage();
 
   useEffect(() => {
-    if (!isSidebarOpen) return;
+    if (!isSidebarOpen) {
+      document.body.classList.remove('sidebar-open');
+      document.documentElement.classList.remove('sidebar-open');
+      return;
+    }
+
+    document.body.classList.add('sidebar-open');
+    document.documentElement.classList.add('sidebar-open');
 
     const previousBodyOverflow = document.body.style.overflow;
     const previousHtmlOverflow = document.documentElement.style.overflow;
@@ -28,6 +35,8 @@ export const Sidebar: React.FC = () => {
     document.body.style.touchAction = 'none';
 
     return () => {
+      document.body.classList.remove('sidebar-open');
+      document.documentElement.classList.remove('sidebar-open');
       document.body.style.overflow = previousBodyOverflow;
       document.documentElement.style.overflow = previousHtmlOverflow;
       document.body.style.touchAction = previousBodyTouchAction;
@@ -88,11 +97,12 @@ export const Sidebar: React.FC = () => {
       {isSidebarOpen && (
         <div 
           onClick={() => setIsSidebarOpen(false)}
+          style={{ touchAction: 'none' }}
           className="fixed inset-0 bg-slate-950/65 z-40 lg:hidden backdrop-blur-xs transition-opacity duration-300 overflow-hidden overscroll-none touch-none"
         />
       )}
 
-      <aside className={`w-[min(20rem,88vw)] lg:w-80 bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 flex flex-col fixed inset-y-0 h-dvh max-h-dvh overflow-hidden overscroll-contain touch-pan-y isolate ${positionClass} z-50 font-sans shadow-2xl transition-transform duration-350 lg:translate-x-0 ${transformClass}`}>
+      <aside className={`w-[min(20rem,88vw)] lg:w-80 bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 flex flex-col fixed inset-y-0 h-dvh max-h-dvh overflow-hidden overscroll-contain touch-pan-y pointer-events-auto isolate ${positionClass} z-50 font-sans shadow-2xl transition-transform duration-350 lg:translate-x-0 ${transformClass}`}>
         {/* Brand Header */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -141,7 +151,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <nav className="min-h-0 flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overscroll-contain touch-pan-y scrollbar-chatgpt">
+        <nav className="min-h-0 flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overscroll-contain touch-pan-y scrollbar-chatgpt" style={{ touchAction: 'pan-y' }}>
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;
