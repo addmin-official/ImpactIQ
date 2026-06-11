@@ -28,11 +28,11 @@ export const Header: React.FC = () => {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case 'admin':
-        return <span className="inline-flex items-center gap-1 bg-rose-500/10 text-rose-600 bg-rose-500/10 text-rose-500 border border-rose-500/20 text-xs px-2.5 py-0.5 rounded-full font-bold">بەڕێوەبەر</span>;
+        return <span className="inline-flex items-center gap-1 bg-rose-500/10 text-rose-600 border border-rose-500/20 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-sm">بەڕێوەبەر</span>;
       case 'staff':
-        return <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-600 bg-amber-500/10 text-amber-500 border border-amber-500/20 text-xs px-2.5 py-0.5 rounded-full font-bold">کارمەندی چاودێری</span>;
+        return <span className="inline-flex items-center gap-1 bg-amber-500/10 text-amber-600 border border-amber-500/20 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-sm">کارمەندی چاودێری</span>;
       default:
-        return <span className="inline-flex items-center gap-1 bg-slate-500/10 text-slate-600 bg-slate-500/10 text-slate-500 border border-slate-500/20 text-xs px-2.5 py-0.5 rounded-full font-bold">بینەری فەرمی</span>;
+        return <span className="inline-flex items-center gap-1 bg-slate-500/10 text-slate-600 border border-slate-500/20 text-[9px] px-2 py-0.5 rounded-full font-bold whitespace-nowrap shadow-sm">بینەری فەرمی</span>;
     }
   };
 
@@ -87,7 +87,7 @@ export const Header: React.FC = () => {
           </div>
           <div className="w-10 h-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-600 font-bold relative shrink-0">
             <User size={20} className="text-slate-500" />
-            <span className="absolute -bottom-1 -left-1">
+            <span className="absolute -bottom-1.5 -left-1.5 whitespace-nowrap z-10 flex">
               {getRoleBadge(currentUser.role)}
             </span>
           </div>
