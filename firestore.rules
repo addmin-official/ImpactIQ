@@ -50,8 +50,8 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Impact Logs Rule definitions
-    match /impact_logs/{logId} {
+    // Impact Records Rule definitions
+    match /impactRecords/{recordId} {
       allow read: if isViewerOrAbove();
       allow create, update: if isStaffOrAdmin();
       allow delete: if isAdmin();
@@ -64,11 +64,17 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Assistant Conversations Rule definitions
+    match /assistantConversations/{conversationId} {
+      allow read: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isViewerOrAbove());
+      allow write: if isSignedIn() && (resource == null || resource.data.userId == request.auth.uid || isAdmin());
+    }
+
     // Users Profiles collections
     match /users/{userId} {
-      allow read: if isViewerOrAbove();
-      // Only administrators can mutate user roles
-      allow create, update, delete: if isAdmin() || (isSignedIn() && request.auth.uid == userId && getUserData().role == 'viewer');
+      allow read: if isSignedIn() && (request.auth.uid == userId || isViewerOrAbove());
+      // Only administrators can create, update, or delete user profiles
+      allow write: if isAdmin();
     }
   }
 }

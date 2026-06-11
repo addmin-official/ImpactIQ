@@ -28,6 +28,7 @@ export interface TranslationDictionary {
     staffDemo: string;
     viewerDemo: string;
     platformDesc: string;
+    profile_not_found: string;
   };
   dashboard: {
     stats_projects: string;
@@ -89,6 +90,10 @@ export interface TranslationDictionary {
     receiving_support: string;
     completed_support: string;
     empty_state: string;
+    prompt_help: string;
+    placeholder_name: string;
+    placeholder_type: string;
+    select_project_option: string;
   };
   impact: {
     title: string;
@@ -251,6 +256,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       staffDemo: 'دیمۆی کارمەند',
       viewerDemo: 'دیمۆی بینەر',
       platformDesc: 'پلاتفۆرمێکی زیرەک بۆ ڕاپۆرتسازی، سوودمەندان و پێوانەکردنی کاریگەری',
+      profile_not_found: 'پڕۆفایلی سەکۆی ئەم ئیمەیڵە لە بنکەدراوەدا نەدۆزرایەوە. تکایە پەیوەندی بکە بە سەرپەرشتیار.',
     },
     dashboard: {
       stats_projects: 'پڕۆژە دەستنیشانکراوەکان',
@@ -312,6 +318,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       receiving_support: 'پاڵپشتی وەردەگرێت',
       completed_support: 'تەواوکراو',
       empty_state: 'هیچ سوودمەندێک تۆمار نەکراوە لەم بەشەدا.',
+      prompt_help: 'تکایە داتاکان بە کوردی سۆرانی داواکراو بنووسە.',
+      placeholder_name: 'ناوی تەواوی بەڕێز بنووسە...',
+      placeholder_type: 'وەک: خولی خەیاتی، سەتڵە خۆراکی مانگانە، زمان...',
+      select_project_option: 'پڕۆژەیەک دەستنیشان بکە',
     },
     impact: {
       title: 'تۆمار و پێوانەکردنی کاریگەری فەرمی',
@@ -472,6 +482,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       staffDemo: 'عرض الموظف',
       viewerDemo: 'عرض المشاهد',
       platformDesc: 'منصة ذكية للتقارير والمستفيدين وقياس الأثر',
+      profile_not_found: 'الملف الشخصي لهذا المستخدم غير مسجل بنظام قاعدة البيانات الوطنية. يرجى الاتصال بالمسؤول.',
     },
     dashboard: {
       stats_projects: 'المشاريع المسجلة',
@@ -533,6 +544,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       receiving_support: 'يتلقى الدعم',
       completed_support: 'مكتمل الدعم',
       empty_state: 'لا يوجد أي مستفيدين مسجلين في هذا القسم حالياً.',
+      prompt_help: 'يرجى مراجعة كافة التفاصيل والبيانات للتوافق مع معايير المشروع.',
+      placeholder_name: 'الاسم الثلاثي الكامل للمستفيد',
+      placeholder_type: 'مثال: سلة مواد تموينية متكاملة، تدريب حرفي',
+      select_project_option: 'اختر المشروع المنسَّق',
     },
     impact: {
       title: 'سجلات وقياس الأثر الرسمي',
@@ -693,6 +708,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       staffDemo: 'Staff demo',
       viewerDemo: 'Viewer demo',
       platformDesc: 'An intelligent platform for reporting, beneficiaries, and impact measurement',
+      profile_not_found: 'No database profile was found matching this account. Please contact your system administrator.',
     },
     dashboard: {
       stats_projects: 'Registered Projects',
@@ -754,6 +770,10 @@ export const translations: Record<Language, TranslationDictionary> = {
       receiving_support: 'Receiving Support',
       completed_support: 'Service Concluded',
       empty_state: 'No registered beneficiaries found in this category at this moment.',
+      prompt_help: 'Please supply valid indicators for tracking empowerment metrics.',
+      placeholder_name: 'Full Legal Name',
+      placeholder_type: 'e.g. Monthly Food Basket recipient',
+      select_project_option: 'Select Project Option',
     },
     impact: {
       title: 'Impact Log & Assessment Metrics',

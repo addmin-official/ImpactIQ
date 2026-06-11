@@ -502,9 +502,7 @@ export const BeneficiariesView: React.FC = () => {
               <div className="text-right rtl:text-right ltr:text-left">
                 <h4 className="font-bold text-base">{isEditing ? t('beneficiaries.edit') : t('beneficiaries.add')}</h4>
                 <p className="text-[11px] text-slate-300 mt-1">
-                  {language === 'en' ? 'Please supply valid indicators for tracking empowerment metrics.' :
-                   language === 'ar' ? 'يرجى مراجعة كافة التفاصيل المسندة للمستلم للتوافق مع شروط الجهة المانحة.' :
-                   'تکایە داتاکان بە کوردی سۆرانی داواکراو بنووسە'}
+                  {t('beneficiaries.prompt_help')}
                 </p>
               </div>
               <button 
@@ -528,7 +526,7 @@ export const BeneficiariesView: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder={language === 'en' ? 'Full Legal Name' : language === 'ar' ? 'الاسم الثلاثي الكامل للمستفيد' : 'ناوی تەواوی بەڕێز بنووسە...'}
+                  placeholder={t('beneficiaries.placeholder_name')}
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"
@@ -600,7 +598,7 @@ export const BeneficiariesView: React.FC = () => {
                   onChange={(e) => setProjectId(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800 cursor-pointer"
                 >
-                  <option value="" disabled>{language === 'en' ? 'Select Project Option' : language === 'ar' ? 'اختر المشروع المنسَّق' : 'پڕۆژەیەک دەستنیشان بکە'}</option>
+                  <option value="" disabled>{t('beneficiaries.select_project_option')}</option>
                   {projects.map(p => (
                     <option key={p.id} value={p.id}>
                       {p.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'en' ? 'Food Waste Reduction' : 
@@ -620,7 +618,7 @@ export const BeneficiariesView: React.FC = () => {
                 <input
                   type="text"
                   required
-                  placeholder={language === 'en' ? 'e.g. Monthly Food Basket recipient' : language === 'ar' ? 'مثال: سلة مواد تموينية متكاملة' : 'وەک: خولی خەیاتی، سەتڵە خۆراکی مانگانە، زمان...'}
+                  placeholder={t('beneficiaries.placeholder_type')}
                   value={beneficiaryType}
                   onChange={(e) => setBeneficiaryType(e.target.value)}
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl p-2.5 text-xs outline-none focus:bg-white focus:border-sky-500 transition-colors font-medium text-slate-800"

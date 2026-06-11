@@ -3,7 +3,7 @@ import { db, auth, hasFirebaseConfig, handleFirestoreError, OperationType } from
 import { ImpactLog } from '../types';
 import { INITIAL_IMPACT_LOGS } from '../mockData';
 
-const COLLECTION_NAME = 'impact_logs';
+const COLLECTION_NAME = 'impactRecords';
 
 export const impactService = {
   /**
@@ -11,9 +11,9 @@ export const impactService = {
    */
   async getImpactLogs(): Promise<ImpactLog[]> {
     if (!db || (hasFirebaseConfig && !auth?.currentUser)) {
-      const saved = localStorage.getItem('mne_impact_logs');
+      const saved = localStorage.getItem('mne_impactRecords');
       if (saved) return JSON.parse(saved);
-      localStorage.setItem('mne_impact_logs', JSON.stringify(INITIAL_IMPACT_LOGS));
+      localStorage.setItem('mne_impactRecords', JSON.stringify(INITIAL_IMPACT_LOGS));
       return INITIAL_IMPACT_LOGS;
     }
 
@@ -48,10 +48,10 @@ export const impactService = {
     const newLog: ImpactLog = { id: newId, ...log };
 
     if (!db || (hasFirebaseConfig && !auth?.currentUser)) {
-      const saved = localStorage.getItem('mne_impact_logs');
+      const saved = localStorage.getItem('mne_impactRecords');
       const list: ImpactLog[] = saved ? JSON.parse(saved) : [...INITIAL_IMPACT_LOGS];
       const updated = [newLog, ...list];
-      localStorage.setItem('mne_impact_logs', JSON.stringify(updated));
+      localStorage.setItem('mne_impactRecords', JSON.stringify(updated));
       return newLog;
     }
 
@@ -77,10 +77,10 @@ export const impactService = {
    */
   async updateImpactLog(log: ImpactLog): Promise<void> {
     if (!db || (hasFirebaseConfig && !auth?.currentUser)) {
-      const saved = localStorage.getItem('mne_impact_logs');
+      const saved = localStorage.getItem('mne_impactRecords');
       const list: ImpactLog[] = saved ? JSON.parse(saved) : [...INITIAL_IMPACT_LOGS];
       const updated = list.map(l => l.id === log.id ? log : l);
-      localStorage.setItem('mne_impact_logs', JSON.stringify(updated));
+      localStorage.setItem('mne_impactRecords', JSON.stringify(updated));
       return;
     }
 
@@ -105,10 +105,10 @@ export const impactService = {
    */
   async deleteImpactLog(id: string): Promise<void> {
     if (!db || (hasFirebaseConfig && !auth?.currentUser)) {
-      const saved = localStorage.getItem('mne_impact_logs');
+      const saved = localStorage.getItem('mne_impactRecords');
       const list: ImpactLog[] = saved ? JSON.parse(saved) : [...INITIAL_IMPACT_LOGS];
       const updated = list.filter(l => l.id !== id);
-      localStorage.setItem('mne_impact_logs', JSON.stringify(updated));
+      localStorage.setItem('mne_impactRecords', JSON.stringify(updated));
       return;
     }
 

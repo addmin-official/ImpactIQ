@@ -92,7 +92,7 @@
       "schema": "Beneficiary",
       "description": "Beneficiaries registered under projects"
     },
-    "/impact_logs/{logId}": {
+    "/impactRecords/{recordId}": {
       "schema": "ImpactLog",
       "description": "Impact measurements and scores"
     },

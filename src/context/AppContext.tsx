@@ -101,15 +101,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
             if (profile) {
               setCurrentUser(profile);
             } else {
-              // Create default profile for the registered user
-              const fallbackProfile: UserProfile = {
-                id: user.uid,
-                email: user.email || '',
-                name: user.email?.split('@')[0] || 'بەکارهێنەر',
-                role: 'viewer'
-              };
-              await userService.saveUserProfile(user.uid, fallbackProfile);
-              setCurrentUser(fallbackProfile);
+              // Missing profile is a security boundary; sign out instantly!
+              await signOut(auth);
+              setCurrentUser(INITIAL_USERS[0]);
             }
           } else {
             // Local fallback if logged out
@@ -163,16 +157,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const response = await signInWithEmailAndPassword(auth, emailStr, passwordStr);
         const uid = response.user.uid;
         
-        let profile = await userService.getUserProfile(uid);
+        const profile = await userService.getUserProfile(uid);
         if (!profile) {
-          // Fallback to viewer role inside database
-          profile = {
-            id: uid,
-            email: emailStr,
-            name: emailStr.split('@')[0],
-            role: 'viewer'
-          };
-          await userService.saveUserProfile(uid, profile);
+          // No user profile exists inside database; sign out immediately and fail!
+          await signOut(auth);
+          throw new Error('NO_PROFILE');
         }
         setCurrentUser(profile);
         return true;
@@ -214,32 +203,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         const email = targetUser.email;
         const password = "Password123";
 
-        try {
-          // Attempt sign in
-          await signInWithEmailAndPassword(auth, email, password);
-        } catch (err: any) {
-          // Auto create user if missing in Authentication
-          if (
-            err.code === 'auth/user-not-found' || 
-            err.code === 'auth/invalid-credential' || 
-            err.code === 'auth/user-disabled' ||
-            err.code === 'auth/invalid-email'
-          ) {
-            const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-            const uid = userCredential.user.uid;
-            
-            // Sync with Firestore profile users db
-            await userService.saveUserProfile(uid, {
-              name: targetUser.name,
-              email: targetUser.email,
-              role: targetUser.role
-            });
-          } else {
-            throw err;
-          }
-        }
+        // Attempt sign in for existing sandbox account only, no auto-creation
+        await signInWithEmailAndPassword(auth, email, password);
       } catch (err) {
-        console.error("Firebase quick profile switch simulation error:", err);
+        console.error("Firebase quick profile switch simulation error (account must be pre-created by admin):", err);
       } finally {
         setIsAuthLoading(false);
       }

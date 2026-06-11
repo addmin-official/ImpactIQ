@@ -67,7 +67,9 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       }
     } catch (err: any) {
       console.error(err);
-      if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-email') {
+      if (err.message === 'NO_PROFILE') {
+        setValidationError(t('login.profile_not_found'));
+      } else if (err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-email') {
         setValidationError(
           language === 'en' ? 'Invalid credentials. Please verify your entries.' :
           language === 'ar' ? 'المعلومات المدخلة غير صحيحة. تأكد منها وحاول مجدداً.' :
