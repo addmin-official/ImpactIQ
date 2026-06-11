@@ -8,11 +8,12 @@ import {
   FileSpreadsheet, 
   Sparkles, 
   ShieldCheck,
-  LogOut
+  LogOut,
+  X
 } from 'lucide-react';
 
 export const Sidebar: React.FC = () => {
-  const { activeTab, setActiveTab, currentUser, switchUser, availableUsers } = useApp();
+  const { activeTab, setActiveTab, currentUser, switchUser, availableUsers, isSidebarOpen, setIsSidebarOpen } = useApp();
 
   const menuItems = [
     { id: 'dashboard', name: 'پەڕەی سەرەکی', icon: LayoutDashboard },
@@ -24,19 +25,36 @@ export const Sidebar: React.FC = () => {
   ];
 
   return (
-    <aside className="w-80 bg-slate-900 text-slate-100 flex flex-col h-screen fixed top-0 right-0 border-l border-slate-800 z-30 font-sans shadow-2xl">
-      {/* Brand Header */}
-      <div className="p-6 border-b border-slate-800 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="p-2.5 bg-sky-600 rounded-xl text-white shadow-lg shadow-sky-550/30">
-            <TrendingUp size={22} className="animate-pulse" />
+    <>
+      {/* Background Overlay for mobile */}
+      {isSidebarOpen && (
+        <div 
+          onClick={() => setIsSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-950/65 z-40 lg:hidden backdrop-blur-xs transition-opacity duration-300"
+        />
+      )}
+
+      <aside className={`w-80 bg-slate-900 text-slate-100 flex flex-col h-screen fixed top-0 right-0 border-l border-slate-800 z-50 font-sans shadow-2xl transition-transform duration-300 lg:translate-x-0 ${isSidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+        {/* Brand Header */}
+        <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2.5 bg-sky-600 rounded-xl text-white shadow-lg shadow-sky-550/30">
+              <TrendingUp size={22} className="animate-pulse" />
+            </div>
+            <div>
+              <h1 className="font-bold text-sm text-slate-100 leading-tight">مێشکی زیرەکی پێوانەکردن</h1>
+              <p className="text-xs text-sky-400 mt-0.5">سیستەمی هەڵسەنگاندنی کاریگەری</p>
+            </div>
           </div>
-          <div>
-            <h1 className="font-bold text-sm text-slate-100 leading-tight">مێشکی زیرەکی پێوانەکردن</h1>
-            <p className="text-xs text-sky-400 mt-0.5">سیستەمی هەڵسەنگاندنی کاریگەری</p>
-          </div>
+          
+          {/* Mobile close button */}
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 cursor-pointer"
+          >
+            <X size={18} />
+          </button>
         </div>
-      </div>
 
       {/* Role Switcher Sandbox Info */}
       <div className="p-4 mx-4 mt-4 bg-slate-800/60 rounded-xl border border-slate-700/50">
@@ -101,5 +119,6 @@ export const Sidebar: React.FC = () => {
         <p className="mt-1 text-[10px] text-slate-500">مۆدێلی ناوەکی: Gemini 3.5 Flash</p>
       </div>
     </aside>
+    </>
   );
 };

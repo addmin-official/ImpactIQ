@@ -38,7 +38,7 @@ const MainLayout: React.FC<{ onLogout: () => void }> = ({ onLogout }) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-800 pr-80 flex flex-col font-sans selection:bg-sky-200">
+    <div className="min-h-screen bg-slate-50 text-slate-800 pr-0 lg:pr-80 flex flex-col font-sans selection:bg-sky-200">
       
       {/* Sidebar for Navigation on the right (RTL padding) */}
       <Sidebar />

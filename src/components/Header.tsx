@@ -6,11 +6,12 @@ import {
   Calendar, 
   HelpCircle,
   TrendingUp,
-  Sparkles
+  Sparkles,
+  Menu
 } from 'lucide-react';
 
 export const Header: React.FC = () => {
-  const { currentUser, activeTab } = useApp();
+  const { currentUser, activeTab, isSidebarOpen, setIsSidebarOpen } = useApp();
 
   const getTabTitle = () => {
     switch (activeTab) {
@@ -36,14 +37,24 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="h-20 bg-white border-b border-slate-200/80 sticky top-0 left-0 right-0 z-20 px-8 flex items-center justify-between font-sans">
-      <div>
-        <h2 className="text-xl font-bold text-slate-800 tracking-tight">{getTabTitle()}</h2>
-        <p className="text-xs text-slate-500 flex items-center gap-1.5 mt-1">
-          <span>ڕێکخراوە ناحکومییەکان و دامەزراوە مرۆییەکان</span>
-          <span className="w-1 h-1 rounded-full bg-slate-300"></span>
-          <span className="text-slate-400">قۆناغی یەکەم (دیمو)</span>
-        </p>
+    <header className="h-20 bg-white border-b border-slate-200/80 sticky top-0 left-0 right-0 z-20 px-4 sm:px-8 flex items-center justify-between font-sans">
+      <div className="flex items-center gap-3">
+        {/* Hamburger Menu on mobile */}
+        <button
+          onClick={() => setIsSidebarOpen(!isSidebarOpen)}
+          className="lg:hidden p-2 text-slate-600 hover:bg-slate-550/10 hover:bg-slate-100 border border-slate-200/70 rounded-xl cursor-pointer"
+          title="تەواوی بەشەکان"
+        >
+          <Menu size={18} />
+        </button>
+        <div>
+          <h2 className="text-sm sm:text-xl font-bold text-slate-800 tracking-tight leading-none sm:leading-normal">{getTabTitle()}</h2>
+          <p className="text-[10px] sm:text-xs text-slate-500 flex items-center gap-1.5 mt-1.5 sm:mt-1">
+            <span>ڕێکخراوە ناحکومییەکان</span>
+            <span className="w-1 h-1 rounded-full bg-slate-300"></span>
+            <span className="text-slate-400">قۆناغی یەکەم</span>
+          </p>
+        </div>
       </div>
 
       <div className="flex items-center gap-6">

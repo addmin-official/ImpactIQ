@@ -18,6 +18,8 @@ interface AppContextType {
   activeTab: string;
   setActiveTab: (tab: string) => void;
   switchUser: (userId: string) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (isOpen: boolean) => void;
   
   // CRUD Projects
   addProject: (project: Omit<Project, 'id'>) => boolean;
@@ -54,11 +56,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [reports, setReports] = useState<Report[]>([]);
   const [currentUser, setCurrentUser] = useState<UserProfile>(INITIAL_USERS[0]); // default to Admin
   const [activeTab, setActiveTab2] = useState<string>('dashboard');
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
 
   // Trigger scroll to top on tab change for clean feel
   const setActiveTab = (tab: string) => {
     setActiveTab2(tab);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setIsSidebarOpen(false);
   };
 
   // Load from local storage or set initial mock data
@@ -301,6 +305,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         activeTab,
         setActiveTab,
         switchUser,
+        isSidebarOpen,
+        setIsSidebarOpen,
         addProject,
         updateProject,
         deleteProject,
