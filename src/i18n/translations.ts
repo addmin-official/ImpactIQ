@@ -112,11 +112,14 @@ export interface TranslationDictionary {
   reports: {
     title: string;
     create: string;
+    add: string;
     edit: string;
     type: string;
     summary: string;
+    executive_summary: string;
     results: string;
     impact_desc: string;
+    impact_description: string;
     recommendations: string;
     created_at: string;
     annual: string;
@@ -125,6 +128,7 @@ export interface TranslationDictionary {
     evaluation: string;
     view_report: string;
     print: string;
+    download: string;
     close: string;
     empty_state: string;
     select_project: string;
@@ -340,11 +344,14 @@ export const translations: Record<Language, TranslationDictionary> = {
     reports: {
       title: 'سیستەمی دروستکردنی ڕاپۆرتی فەرمی',
       create: 'دروستکردنی ڕاپۆرتی نوێ',
+      add: 'زیادکردنی ڕاپۆرتی نوێ',
       edit: 'دەستکاریکردنی ڕاپۆرت',
       type: 'جۆری ڕاپۆرت',
       summary: 'پوختەی جێبەجێکردن',
+      executive_summary: 'کورتەی جێبەجێکردن',
       results: 'ئەنجامە فیزیکی و ژمارەییەکان',
       impact_desc: 'شیکردنەوەی کاریگەری کۆمەڵایەتی/مادی',
+      impact_description: 'شیکردنەوەی کاریگەری کۆمەڵایەتی/مادی',
       recommendations: 'پێشنیار داهاتووییەکان بۆ گەشەپێدان',
       created_at: 'ڕێکەوتی واژۆکردن',
       annual: 'ساڵانە',
@@ -353,6 +360,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       evaluation: 'هەڵسەنگاندنی کۆتایی',
       view_report: 'بینینی ڕاپۆرت و چاپکردن',
       print: 'چاپکردنی ڕاپۆرت',
+      download: 'دابەزاندنی فایل',
       close: 'داخستن',
       empty_state: 'هیچ ڕاپۆرتێکی فەرمی ئامادە نەکراوە تا ئێستا.',
       select_project: 'پڕۆژەی فەرمی دیاریبکە',
@@ -566,11 +574,14 @@ export const translations: Record<Language, TranslationDictionary> = {
     reports: {
       title: 'منظومة إعداد التقارير الرسمية',
       create: 'إعداد تقرير جديد',
+      add: 'إضافة تقرير جديد',
       edit: 'تعديل التقرير',
       type: 'نوع التقرير',
       summary: 'الملخص التنفيذي للأعمال',
+      executive_summary: 'الملخص التنفيذي للأعمال',
       results: 'النتائج الملموسة المحددة بمقاييس',
       impact_desc: 'تحليل الأثر الاجتماعي والمادي',
+      impact_description: 'تحليل الأثر الاجتماعي والمادي',
       recommendations: 'التوصيات والملاحظات المستقبلية للتطوير',
       created_at: 'تاريخ التوقيع والتحرير',
       annual: 'سنوي',
@@ -579,6 +590,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       evaluation: 'تقييم نهائي',
       view_report: 'معاينة التقرير والطباعة',
       print: 'طباعة التقرير الفني',
+      download: 'تحميل الملف',
       close: 'إغلاق المعاينة',
       empty_state: 'لم يتم إصدار أي كشوف تقارير رسمية للمشاريع بعد.',
       select_project: 'حدد المشروع الرسمي',
@@ -792,11 +804,14 @@ export const translations: Record<Language, TranslationDictionary> = {
     reports: {
       title: 'Technical M&E Reporting System',
       create: 'Create Evaluation Report',
+      add: 'Add New Report',
       edit: 'Edit Report Specifications',
       type: 'Reporting Standard Type',
       summary: 'Executive Abstract Summary',
+      executive_summary: 'Executive Abstract Summary',
       results: 'Quantifiable Quantative Outcomes',
       impact_desc: 'Synthesized Social/Environmental Impact',
+      impact_description: 'Synthesized Social/Environmental Impact',
       recommendations: 'Strategic Lessons & Next Interventions',
       created_at: 'Date of Completion',
       annual: 'Annual Report',
@@ -805,6 +820,7 @@ export const translations: Record<Language, TranslationDictionary> = {
       evaluation: 'End-Line Evaluation',
       view_report: 'Preview Document & Print Layout',
       print: 'Print Technical Report',
+      download: 'Download Document',
       close: 'Close Window',
       empty_state: 'No official report sheets are currently saved.',
       select_project: 'Select Official Project Link',

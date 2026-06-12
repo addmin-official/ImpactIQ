@@ -170,14 +170,14 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       <div className="absolute top-0 left-0 w-[500px] h-[500px] bg-sky-500/5 dark:bg-sky-500/10 rounded-full blur-3xl -translate-x-24 -translate-y-24 pointer-events-none" />
       <div className="absolute top-1/2 right-0 w-[600px] h-[600px] bg-amber-500/5 dark:bg-amber-500/5 rounded-full blur-3xl translate-x-32 pointer-events-none" />
 
-      {/* ================= SECTION 1: HEADER & LANGUAGE GATEWAY ================= */}
-      <header id="gateway-portal-anchor" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 sm:pt-20 pb-16 flex flex-col items-center">
+      {/* ================= SECTION 1: HEADER & HERO GATEWAY ================= */}
+      <header id="gateway-portal-anchor" className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 sm:pt-16 pb-16">
         
         {/* Brand visual header */}
-        <div className="text-center space-y-4 max-w-3xl mx-auto mb-10">
+        <div className="text-center space-y-4 max-w-3xl mx-auto mb-10 text-right rtl:text-right">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 dark:bg-amber-500/20 border border-amber-500/30 text-amber-700 dark:text-amber-300 text-xs font-bold uppercase tracking-wider mb-2">
             <Sparkles size={14} className="animate-spin" style={{ animationDuration: '3s' }} />
-            <span>NGO IMPACT SECTOR STANDARD</span>
+            <span>NGO IMPACT SECTOR STANDARD • نێودەوڵەتی</span>
           </div>
           <h1 className="text-4xl sm:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 tracking-tight">
             ImpactIQ
@@ -185,27 +185,61 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
           <h2 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-slate-100 px-2 leading-snug">
             {t('login.title')}
           </h2>
-          <p className="text-sm sm:text-base text-slate-600 dark:text-slate-350 max-w-2xl mx-auto font-medium leading-relaxed">
+          <p className="text-sm sm:text-base text-slate-650 dark:text-slate-350 max-w-2xl mx-auto font-medium leading-relaxed">
             {t('login.platformDesc')} ({t('login.sub_title')})
           </p>
         </div>
 
-        {/* Wikipedia-inspired Centered Orb Layout */}
-        <div className="w-full relative py-2 max-w-4xl mx-auto">
+        {/* Modern SaaS Language Selection Panels (Direct flat grid layout, immune to absolute breakage) */}
+        <div className="w-full max-w-4xl mx-auto my-8 space-y-4">
+          <h3 className="text-xs font-bold uppercase tracking-widest text-slate-400 dark:text-slate-500 text-center">
+            {language === 'ckb' ? 'زمانی فەرمی هەڵبژێرە بۆ بەردەوامبوون' :
+             language === 'ar' ? 'اختر لغة النظام المفضلة للاستمرار' :
+             'Choose official operational language to proceed'}
+          </h3>
           
-          {/* DESKTOP VIEW: Orbit structure around central emblem */}
-          <div className="relative w-full max-w-2xl h-80 hidden md:block mx-auto">
-            
-            {/* Center verification radar logo */}
-            <div className="md:absolute md:inset-0 md:m-auto md:w-44 md:h-44 flex items-center justify-center z-10 select-none">
-              <div className="absolute w-40 h-40 border-2 border-dashed border-amber-500/20 rounded-full animate-spin" style={{ animationDuration: '40s' }} />
-              <div className="absolute w-32 h-32 border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-950/95 rounded-full flex flex-col items-center justify-center p-3 shadow-2xl">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-amber-500/10 to-amber-600/5 flex items-center justify-center border border-amber-500/30 text-amber-500 shadow-inner">
-                  <ShieldCheck size={26} className="text-amber-500 animate-pulse" />
-                </div>
-                <span className="text-[10px] mt-2 tracking-widest font-extrabold font-mono text-slate-500 dark:text-slate-400">IMPACT NETWORK</span>
-              </div>
-            </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-2">
+            {languagesConfig.map((langObj) => {
+              const isActive = language === langObj.code;
+              return (
+                <button
+                  type="button"
+                  key={langObj.code}
+                  onClick={() => handleLangSelect(langObj.code)}
+                  className={`p-4 bg-white dark:bg-slate-900 border rounded-2xl transition-all duration-300 cursor-pointer text-right group flex flex-col justify-between h-42 shadow-sm relative ${
+                    isActive
+                      ? 'border-amber-500 shadow-xl shadow-amber-500/10 scale-[1.02] bg-amber-50/5 dark:bg-amber-955/20 ring-2 ring-amber-500/35 text-slate-955 dark:text-slate-100 z-10'
+                      : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-350 hover:border-slate-300 dark:hover:border-slate-700'
+                  }`}
+                >
+                  <div className="flex items-center gap-2 flex-wrap justify-between w-full">
+                    <span className={`text-[10px] sm:text-xs font-bold font-mono px-2 py-0.5 rounded ${
+                      isActive ? 'bg-amber-500/10 dark:bg-amber-500/25 text-amber-600 dark:text-amber-300 border border-amber-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-550'
+                    }`}>
+                      {langObj.nativeLabel}
+                    </span>
+                    <span className={`text-sm font-black ${isActive ? 'text-amber-600 dark:text-amber-400' : 'text-slate-800 dark:text-slate-100'}`}>{langObj.label}</span>
+                  </div>
+                  <div>
+                    <p className={`text-[11px] mt-2 leading-relaxed ${
+                      isActive ? 'text-slate-800 dark:text-slate-100 font-bold font-semibold' : 'text-slate-505 dark:text-slate-400'
+                    }`}>
+                      {langObj.desc}
+                    </p>
+                  </div>
+                  <div className="w-full text-left font-mono mt-2 text-[9px] text-slate-405 dark:text-slate-500 flex items-center justify-end gap-1 flex-row-reverse">
+                    <span>{language === 'en' ? 'Select' : 'دیاریکردن'}</span>
+                    <ShieldCheck size={11} className={isActive ? 'text-amber-500 animate-pulse' : 'text-slate-300'} />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Hidden radar legacy container */}
+        <div className="hidden">
+          <div className="hidden">
 
             {/* Language Orbit Cards representing Kurdish, Arabic, and English */}
             {languagesConfig.map((langObj) => {
@@ -474,7 +508,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </header>
 
       {/* ================= SECTION 2: HERO VALUE & MOCKUP GRID ================= */}
-      <section className="w-full bg-white dark:bg-slate-900 border-y border-slate-200/60 dark:border-slate-850/60 py-16 sm:py-24 transition-colors">
+      <section className="w-full max-w-full overflow-x-hidden min-w-0 bg-white dark:bg-slate-900 border-y border-slate-200/60 dark:border-slate-850/60 py-16 sm:py-24 transition-colors">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
             
@@ -619,7 +653,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* ================= SECTION 3: TRUST & PROOF STRIP ================= */}
-      <section className="w-full bg-slate-50 dark:bg-slate-950 py-16 transition-colors border-b border-slate-200/50 dark:border-slate-900/50">
+      <section className="w-full max-w-full overflow-x-hidden min-w-0 bg-slate-50 dark:bg-slate-950 py-16 transition-colors border-b border-slate-200/50 dark:border-slate-900/50">
         <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center space-y-2 mb-12">
@@ -688,7 +722,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* ================= SECTION 4: PROBLEM STATEMENT ================= */}
-      <section className="w-full bg-slate-50 dark:bg-slate-950 py-16 sm:py-24 transition-colors border-b border-slate-200/50 dark:border-slate-900/40">
+      <section className="w-full max-w-full overflow-x-hidden min-w-0 bg-slate-50 dark:bg-slate-950 py-16 sm:py-24 transition-colors border-b border-slate-200/50 dark:border-slate-900/40">
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
@@ -785,7 +819,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* ================= SECTION 5: SOLUTION PLATFORM ================= */}
-      <section className="w-full bg-white dark:bg-slate-900 py-16 sm:py-24 transition-colors">
+      <section className="w-full max-w-full overflow-x-hidden min-w-0 bg-white dark:bg-slate-900 py-16 sm:py-24 transition-colors">
         <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           
           <div className="text-center max-w-3xl mx-auto mb-16 space-y-4">
@@ -859,7 +893,7 @@ export const LoginView: React.FC<LoginViewProps> = ({ onLoginSuccess }) => {
       </section>
 
       {/* ================= SECTION 6: FINAL CALL TO ACTION ================= */}
-      <section className="w-full bg-amber-500 text-slate-950 py-16 sm:py-20 transition-colors">
+      <section className="w-full max-w-full overflow-x-hidden min-w-0 bg-amber-500 text-slate-950 py-16 sm:py-20 transition-colors">
         <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-6">
           <h3 className="text-3xl sm:text-5xl font-black tracking-tight leading-none">
             {t('landing.final_cta_title')}

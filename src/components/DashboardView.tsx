@@ -115,70 +115,71 @@ export const DashboardView: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         
         {/* KPI Card: Projects */}
-        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-500">{t('dashboard.stats_projects')}</span>
-            <div className="p-3 bg-sky-50 rounded-xl text-sky-600">
+            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('dashboard.stats_projects')}</span>
+            <div className="p-3 bg-sky-50 dark:bg-sky-950/40 rounded-xl text-sky-600 dark:text-sky-400 border border-sky-100/50 dark:border-sky-900/30">
               <FolderGit2 size={20} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-extrabold text-slate-800">{totalProjects}</h3>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
-              <span className="text-emerald-600 font-semibold">{activeCount} {getStatusLabelText('active')}</span>
-              <span>•</span>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">{totalProjects}</h3>
+            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600 dark:text-slate-400 font-semibold">
+              <span className="text-emerald-600 dark:text-emerald-450 font-bold">{activeCount} {getStatusLabelText('active')}</span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
               <span>{planningCount} {getStatusLabelText('planning')}</span>
             </div>
           </div>
         </div>
 
         {/* KPI Card: Beneficiaries */}
-        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-500">{t('dashboard.stats_beneficiaries')}</span>
-            <div className="p-3 bg-teal-50 rounded-xl text-teal-600">
+            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('dashboard.stats_beneficiaries')}</span>
+            <div className="p-3 bg-teal-50 dark:bg-teal-950/40 rounded-xl text-teal-600 dark:text-teal-400 border border-teal-100/50 dark:border-teal-900/30">
               <Users size={20} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-extrabold text-slate-800">
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">
               {beneficiaries.reduce((sum, b) => sum + 1, 0) + projects.reduce((sum, p) => sum + p.beneficiariesCount, 0)}
             </h3>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
-              <span className="text-teal-600 font-semibold">{getVerificationText()}</span>
+            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600 dark:text-slate-400 font-semibold">
+              <span className="text-teal-600 dark:text-teal-400 font-bold">{getVerificationText()}</span>
             </div>
           </div>
         </div>
 
         {/* KPI Card: Average Impact */}
-        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-500">{t('dashboard.stats_impact')}</span>
-            <div className="p-3 bg-indigo-50 rounded-xl text-indigo-600">
+            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('dashboard.stats_impact')}</span>
+            <div className="p-3 bg-indigo-50 dark:bg-indigo-950/40 rounded-xl text-indigo-600 dark:text-indigo-400 border border-indigo-100/50 dark:border-indigo-900/30">
               <Award size={20} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-extrabold text-slate-800">{avgImpact} <span className="text-xs text-slate-400">/ ١٠</span></h3>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
-              <span className="text-indigo-600 font-bold">{language === 'en' ? 'Optimal' : language === 'ar' ? 'ممتاز جداً' : 'زۆر باش'}</span>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">{avgImpact} <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">/ ١٠</span></h3>
+            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600 dark:text-slate-400 font-semibold">
+              <span className="text-indigo-600 dark:text-indigo-450 font-bold">{language === 'en' ? 'Optimal' : language === 'ar' ? 'ممتاز جداً' : 'زۆر باش'}</span>
+              <span className="text-slate-300 dark:text-slate-700">•</span>
               <span>{language === 'en' ? 'M&E Measured' : language === 'ar' ? 'حسب القياسات' : 'لەسەر بنەمای پێشکەوتنەکان'}</span>
             </div>
           </div>
         </div>
 
         {/* KPI Card: Stakeholder Reports */}
-        <div className="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
+        <div className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800/80 p-6 rounded-2xl shadow-sm hover:shadow-md transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-semibold text-slate-500">{t('dashboard.stats_reports')}</span>
-            <div className="p-3 bg-amber-50 rounded-xl text-amber-600">
+            <span className="text-sm font-bold text-slate-700 dark:text-slate-300">{t('dashboard.stats_reports')}</span>
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/40 rounded-xl text-amber-600 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/30">
               <FileSpreadsheet size={20} />
             </div>
           </div>
           <div className="mt-4">
-            <h3 className="text-3xl font-extrabold text-slate-800">{totalReports}</h3>
-            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-500">
-              <span className="text-amber-600 font-semibold">{getSubmittedText()}</span>
+            <h3 className="text-3xl font-extrabold text-slate-900 dark:text-slate-50">{totalReports}</h3>
+            <div className="flex items-center gap-1.5 mt-2 text-xs text-slate-600 dark:text-slate-400 font-semibold">
+              <span className="text-amber-600 dark:text-amber-450 font-bold">{getSubmittedText()}</span>
             </div>
           </div>
         </div>
@@ -401,22 +402,22 @@ export const DashboardView: React.FC = () => {
             {reports.map(r => {
               const connectedProj = projects.find(p => p.id === r.projectId);
               return (
-                <div key={r.id} className="p-5 border border-slate-100 rounded-xl bg-slate-50/30 hover:bg-slate-50 transition-colors space-y-3">
+                <div key={r.id} className="p-5 border border-slate-200 dark:border-slate-800 rounded-xl bg-slate-50 dark:bg-slate-900/60 hover:bg-slate-100 dark:hover:bg-slate-850/60 transition-colors space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="font-bold text-slate-800 text-sm block truncate max-w-[250px]">{r.title}</span>
-                    <span className="text-[10px] uppercase bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-md">
+                    <span className="font-bold text-slate-900 dark:text-slate-100 text-sm block truncate max-w-[250px]">{r.title}</span>
+                    <span className="text-[10px] uppercase bg-slate-200 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold px-2 py-0.5 rounded-md">
                       {r.reportType === 'monthly' ? t('reports.monthly') :
                        r.reportType === 'quarterly' ? t('reports.quarterly') :
                        r.reportType === 'annual' ? t('reports.annual') : t('reports.evaluation')}
                     </span>
                   </div>
 
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed h-8">
+                  <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-2 leading-relaxed h-8 font-semibold">
                     {r.executiveSummary}
                   </p>
 
-                  <div className="flex items-center justify-between text-[11px] text-slate-400 pt-2 border-t border-slate-100">
-                    <span>{language === 'en' ? 'Project' : language === 'ar' ? 'المشروع' : 'پڕۆژە'}: <strong className="text-slate-600">
+                  <div className="flex items-center justify-between text-[11px] text-slate-600 dark:text-slate-400 pt-2 border-t border-slate-200 dark:border-slate-800/80">
+                    <span>{language === 'en' ? 'Project' : language === 'ar' ? 'المشروع' : 'پڕۆژە'}: <strong className="text-slate-700 dark:text-slate-300 font-bold">
                       {connectedProj?.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'en' ? 'Food Waste Reduction' : 
                        connectedProj?.name === 'کەمکردنەوەی پاشماوەی خۆراک' && language === 'ar' ? 'تقليل هدر الطعام' :
                        connectedProj?.name === 'توانابەخشینی ژنان' && language === 'en' ? 'Women Empowerment' :
@@ -424,8 +425,8 @@ export const DashboardView: React.FC = () => {
                        connectedProj?.name === 'فێرکردنی لاوان' && language === 'en' ? 'Youth Education' :
                        connectedProj?.name === 'فێرکردنی لاوان' && language === 'ar' ? 'تعليم الشباب' : connectedProj?.name || 'M&E Project'}
                     </strong></span>
-                    <span className="flex items-center gap-1">
-                      <Clock size={11} />
+                    <span className="flex items-center gap-1 font-bold text-slate-700 dark:text-slate-300">
+                      <Clock size={11} className="text-slate-500 dark:text-slate-400" />
                       <span>{r.createdAt}</span>
                     </span>
                   </div>

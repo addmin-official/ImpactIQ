@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { useLanguage } from '../context/LanguageContext';
 import { 
@@ -16,32 +16,92 @@ export const Sidebar: React.FC = () => {
   const { activeTab, setActiveTab, currentUser, switchUser, availableUsers, isSidebarOpen, setIsSidebarOpen } = useApp();
   const { direction, language, t } = useLanguage();
 
+  const sidebarRef = useRef<HTMLElement | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
-    if (!isSidebarOpen) {
-      document.body.classList.remove('sidebar-open');
-      document.documentElement.classList.remove('sidebar-open');
-      return;
-    }
+    const checkIfMobile = () => window.innerWidth < 1024;
 
-    document.body.classList.add('sidebar-open');
-    document.documentElement.classList.add('sidebar-open');
+    const handleScrollLock = () => {
+      if (isSidebarOpen && checkIfMobile()) {
+        const scrollY = window.scrollY;
+        document.body.classList.add('sidebar-open');
+        document.documentElement.classList.add('sidebar-open');
 
-    const previousBodyOverflow = document.body.style.overflow;
-    const previousHtmlOverflow = document.documentElement.style.overflow;
-    const previousBodyTouchAction = document.body.style.touchAction;
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+        document.body.style.position = 'fixed';
+        document.body.style.top = `-${scrollY}px`;
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100vw';
+      } else {
+        const tempTop = document.body.style.top;
+        const scrollY = tempTop ? Math.abs(parseInt(tempTop, 10)) : 0;
 
-    document.body.style.overflow = 'hidden';
-    document.documentElement.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
+        document.body.classList.remove('sidebar-open');
+        document.documentElement.classList.remove('sidebar-open');
+
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
+
+        if (scrollY) {
+          window.scrollTo(0, scrollY);
+        }
+      }
+    };
+
+    handleScrollLock();
+
+    const handleResize = () => {
+      handleScrollLock();
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
+      window.removeEventListener('resize', handleResize);
       document.body.classList.remove('sidebar-open');
       document.documentElement.classList.remove('sidebar-open');
-      document.body.style.overflow = previousBodyOverflow;
-      document.documentElement.style.overflow = previousHtmlOverflow;
-      document.body.style.touchAction = previousBodyTouchAction;
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.width = '';
     };
   }, [isSidebarOpen]);
+
+  useEffect(() => {
+    const sidebarEl = sidebarRef.current;
+    if (!sidebarEl) return;
+
+    const stopPropagation = (event: Event) => {
+      event.stopPropagation();
+    };
+
+    const options: AddEventListenerOptions = { capture: true, passive: false };
+
+    sidebarEl.addEventListener('wheel', stopPropagation, options);
+    sidebarEl.addEventListener('touchmove', stopPropagation, options);
+    sidebarEl.addEventListener('touchstart', stopPropagation, options);
+    sidebarEl.addEventListener('touchend', stopPropagation, options);
+    sidebarEl.addEventListener('scroll', stopPropagation, options);
+
+    return () => {
+      sidebarEl.removeEventListener('wheel', stopPropagation, { capture: true });
+      sidebarEl.removeEventListener('touchmove', stopPropagation, { capture: true });
+      sidebarEl.removeEventListener('touchstart', stopPropagation, { capture: true });
+      sidebarEl.removeEventListener('touchend', stopPropagation, { capture: true });
+      sidebarEl.removeEventListener('scroll', stopPropagation, { capture: true });
+    };
+  }, []);
 
   const menuItems = [
     { id: 'dashboard', name: t('nav.dashboard'), icon: LayoutDashboard },
@@ -102,7 +162,7 @@ export const Sidebar: React.FC = () => {
         />
       )}
 
-      <aside className={`w-[min(20rem,88vw)] lg:w-80 bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 flex flex-col fixed inset-y-0 h-dvh max-h-dvh overflow-hidden overscroll-contain touch-pan-y pointer-events-auto isolate ${positionClass} z-50 font-sans shadow-2xl transition-transform duration-350 lg:translate-x-0 ${transformClass}`}>
+      <aside ref={sidebarRef} data-sidebar-scroll-root="true" className={`w-[min(20rem,88vw)] lg:w-80 bg-white dark:bg-[#0f172a] text-slate-800 dark:text-slate-100 flex flex-col fixed inset-y-0 h-dvh max-h-dvh overflow-hidden overscroll-contain touch-pan-y pointer-events-auto contain-layout contain-paint isolate ${positionClass} z-50 font-sans shadow-2xl transition-transform duration-350 lg:translate-x-0 ${transformClass}`}>
         {/* Brand Header */}
         <div className="p-6 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -151,7 +211,7 @@ export const Sidebar: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <nav className="min-h-0 flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overscroll-contain touch-pan-y scrollbar-chatgpt" style={{ touchAction: 'pan-y' }}>
+        <nav ref={navRef} data-sidebar-nav="true" className="min-h-0 max-h-full flex-1 px-4 py-6 space-y-1.5 overflow-y-auto overscroll-contain touch-pan-y scrollbar-chatgpt will-change-scroll" style={{ touchAction: 'pan-y' }}>
           {menuItems.map((item) => {
             const Icon = item.icon;
             const isActive = activeTab === item.id;

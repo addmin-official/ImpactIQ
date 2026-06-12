@@ -91,11 +91,11 @@ export const Header: React.FC = () => {
           <Menu size={18} />
         </button>
         <div>
-          <h2 className="text-sm sm:text-xl font-bold text-slate-800 dark:text-slate-100 tracking-tight leading-none sm:leading-normal">{getTabTitle()}</h2>
-          <p className="text-[10px] sm:text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1.5 mt-1.5 sm:mt-1">
+          <h2 className="text-sm sm:text-xl font-bold text-slate-900 dark:text-slate-100 tracking-tight leading-none sm:leading-normal">{getTabTitle()}</h2>
+          <p className="text-[10px] sm:text-xs text-slate-700 dark:text-slate-300 flex items-center gap-1.5 mt-1.5 sm:mt-1 font-semibold">
             <span>{getSubTitleString()}</span>
-            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700"></span>
-            <span className="text-slate-400 dark:text-slate-550">{getPhaseString()}</span>
+            <span className="w-1 h-1 rounded-full bg-slate-400 dark:bg-slate-600"></span>
+            <span className="text-slate-600 dark:text-slate-400 font-bold">{getPhaseString()}</span>
           </p>
         </div>
       </div>
@@ -151,19 +151,19 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Date tracker */}
-        <div className={`hidden md:flex text-xs text-slate-500 dark:text-slate-400 h-9 flex-col justify-center ${direction === 'rtl' ? 'border-l border-slate-200 dark:border-slate-805 pl-4 text-right' : 'border-r border-slate-200 dark:border-slate-805 pr-4 text-left'}`}>
-          <div className={`flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300 ${direction === 'rtl' ? 'justify-end' : 'justify-start'}`}>
-            <Calendar size={13} className="text-slate-400 dark:text-slate-550" />
+        <div className={`hidden md:flex text-xs text-slate-700 dark:text-slate-300 h-9 flex-col justify-center ${direction === 'rtl' ? 'border-l border-slate-200 dark:border-slate-805 pl-4 text-right' : 'border-r border-slate-200 dark:border-slate-805 pr-4 text-left'}`}>
+          <div className={`flex items-center gap-1.5 font-bold text-slate-800 dark:text-slate-200 ${direction === 'rtl' ? 'justify-end' : 'justify-start'}`}>
+            <Calendar size={13} className="text-slate-500 dark:text-slate-400" />
             <span>{getDateString()}</span>
           </div>
-          <span className={`text-[10px] text-slate-400 dark:text-slate-550 ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>{getStatusString()}</span>
+          <span className={`text-[10px] text-slate-505 dark:text-slate-400 ${direction === 'rtl' ? 'text-right' : 'text-left'} font-semibold`}>{getStatusString()}</span>
         </div>
 
         {/* Current profile status */}
         <div className="flex items-center gap-2.5 sm:gap-3">
           <div className={`hidden sm:block ${direction === 'rtl' ? 'text-right' : 'text-left'}`}>
-            <p className="text-xs font-bold text-slate-850 dark:text-slate-100 leading-tight">{currentUser.name}</p>
-            <p className="text-[10px] text-slate-550 dark:text-slate-400 mt-0.5">{currentUser.email}</p>
+            <p className="text-xs font-bold text-slate-900 dark:text-slate-50 leading-tight">{currentUser.name}</p>
+            <p className="text-[10px] text-slate-600 dark:text-slate-350 mt-0.5 font-bold">{currentUser.email}</p>
           </div>
           <div className="w-10 h-10 rounded-xl bg-slate-100 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-center text-slate-600 dark:text-slate-300 font-bold relative shrink-0">
             <User size={20} className="text-slate-500 dark:text-slate-400" />

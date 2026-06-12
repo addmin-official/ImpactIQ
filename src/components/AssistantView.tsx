@@ -176,10 +176,10 @@ export const AssistantView: React.FC = () => {
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 animate-fade-in font-sans h-auto lg:h-[calc(100vh-140px)] pb-6 lg:pb-0">
       
       {/* Middle/Left Chatting Arena */}
-      <div className="lg:col-span-3 bg-white border border-slate-200/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-[500px] lg:h-full">
+      <div className="lg:col-span-3 bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-805/80 rounded-2xl shadow-sm flex flex-col overflow-hidden h-[500px] lg:h-full transition-colors">
         
         {/* Chat Status Bar Header */}
-        <div className="p-4 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 shrink-0">
+        <div className="p-4 bg-slate-900 dark:bg-slate-950 text-white flex items-center justify-between border-b border-slate-800 dark:border-slate-850 shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 rounded-lg bg-sky-600/20 text-sky-400 flex items-center justify-center border border-sky-500/20">
               <Sparkles size={16} className="animate-spin" style={{ animationDuration: '4s' }} />
@@ -200,7 +200,7 @@ export const AssistantView: React.FC = () => {
         </div>
 
         {/* Conversation Bubbles Scroll Container */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50">
+        <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-slate-50/50 dark:bg-slate-950/20">
           {messages.map((m) => {
             const isUser = m.sender === 'user';
             return (
@@ -211,7 +211,7 @@ export const AssistantView: React.FC = () => {
                 {/* Sender Icon */}
                 <div className={`w-8 h-8 rounded-lg shrink-0 flex items-center justify-center border ${
                   isUser 
-                    ? 'bg-sky-50 text-sky-600 border-sky-100' 
+                    ? 'bg-sky-50 dark:bg-sky-950/40 text-sky-600 dark:text-sky-450 border-sky-100 dark:border-sky-900/30' 
                     : 'bg-indigo-900 text-indigo-200 border-indigo-950'
                 }`}>
                   {isUser ? <User size={14} /> : <Bot size={14} />}
@@ -219,14 +219,14 @@ export const AssistantView: React.FC = () => {
 
                 {/* Message Bubble Column */}
                 <div className="space-y-1">
-                  <div className={`p-4 rounded-2xl text-xs leading-relaxed font-medium whitespace-pre-line ${
+                  <div className={`p-4 rounded-2xl text-xs leading-relaxed font-semibold whitespace-pre-line shadow-xs ${
                     isUser 
-                      ? 'bg-sky-600 text-white rounded-tl-none font-semibold shadow-md shadow-sky-600/5' 
-                      : 'bg-white text-slate-800 border border-slate-200/80 rounded-tr-none text-right rtl:text-right ltr:text-left'
+                      ? 'bg-sky-600 text-white rounded-tl-none shadow-md shadow-sky-600/5 font-bold' 
+                      : 'bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 border border-slate-205 dark:border-slate-800/80 rounded-tr-none text-right rtl:text-right ltr:text-left'
                   }`}>
                     {m.text}
                   </div>
-                  <span className={`text-[9px] text-slate-400 block px-1 font-mono ${isUser ? (direction === 'rtl' ? 'text-right' : 'text-left') : (direction === 'rtl' ? 'text-left' : 'text-right')}`}>
+                  <span className={`text-[9px] text-slate-500 dark:text-slate-400 block px-1 font-mono ${isUser ? (direction === 'rtl' ? 'text-right' : 'text-left') : (direction === 'rtl' ? 'text-left' : 'text-right')}`}>
                     {m.timestamp}
                   </span>
                 </div>
@@ -241,7 +241,7 @@ export const AssistantView: React.FC = () => {
                 <RefreshCw size={14} className="animate-spin" />
               </div>
               <div className="space-y-1">
-                <div className="p-4 bg-white border border-slate-200/80 text-slate-500 rounded-2xl rounded-tr-none text-xs flex items-center gap-2 font-bold animate-pulse">
+                <div className="p-4 bg-white dark:bg-slate-950 border border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 rounded-2xl rounded-tr-none text-xs flex items-center gap-2 font-bold animate-pulse">
                   <span>{getAssistantLoadingMsg()}</span>
                 </div>
               </div>
@@ -257,7 +257,7 @@ export const AssistantView: React.FC = () => {
             e.preventDefault();
             handleSendMessage(inputValue);
           }}
-          className="p-4 bg-white border-t border-slate-200/85 flex items-center gap-3 shrink-0"
+          className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200/85 dark:border-slate-800/85 flex items-center gap-3 shrink-0"
         >
           <input
             id="assistant-textbox"
@@ -266,7 +266,7 @@ export const AssistantView: React.FC = () => {
             value={inputValue}
             onChange={(e) => setInputValue(e.target.value)}
             placeholder={t('assistant.placeholder')}
-            className="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs outline-none focus:bg-white focus:border-sky-500 transition-all font-medium text-slate-800"
+            className="flex-1 bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl px-4 py-3 text-xs outline-none focus:bg-white dark:focus:bg-slate-900 focus:border-sky-500 transition-all font-semibold text-slate-900 dark:text-slate-100"
           />
           <button
             type="submit"
@@ -283,12 +283,12 @@ export const AssistantView: React.FC = () => {
       <div className="space-y-6 lg:col-span-1 h-full overflow-y-auto">
         
         {/* Explanatory manual */}
-        <div className="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-xs text-right rtl:text-right ltr:text-left">
-          <h4 className="text-xs font-bold text-slate-800 mb-3 flex items-center gap-2.5 flex-row-reverse">
-            <HelpCircle size={15} className="text-sky-600" />
+        <div className="bg-white dark:bg-slate-900 border border-slate-200/80 dark:border-slate-800/80 p-5 rounded-2xl shadow-xs text-right rtl:text-right ltr:text-left transition-colors">
+          <h4 className="text-xs font-bold text-slate-900 dark:text-slate-100 mb-3 flex items-center gap-2.5 flex-row-reverse">
+            <HelpCircle size={15} className="text-sky-605 text-sky-500 dark:text-sky-400" />
             <span className="flex-1">{getQuickManualTitle()}</span>
           </h4>
-          <p className="text-[11px] text-slate-500 leading-relaxed mb-4">
+          <p className="text-[11px] text-slate-600 dark:text-slate-300 leading-relaxed mb-4 font-semibold">
             {getQuickManualSub()}
           </p>
 
@@ -300,10 +300,10 @@ export const AssistantView: React.FC = () => {
                   id={`quick-prompt-btn-${idx}`}
                   key={idx}
                   onClick={() => handleSendMessage(prompt.text)}
-                  className="w-full text-right p-3 bg-slate-50 border border-slate-100 hover:bg-slate-100 hover:border-slate-200 transition-all rounded-xl text-xs text-slate-650 flex items-start gap-2.5 group cursor-pointer flex-row-reverse"
+                  className="w-full text-right p-3 bg-slate-50 dark:bg-slate-950 border border-slate-100 dark:border-slate-800/75 hover:bg-slate-100 dark:hover:bg-slate-900 hover:border-slate-200 dark:hover:border-slate-700 transition-all rounded-xl text-xs text-slate-800 dark:text-slate-200 flex items-start gap-2.5 group cursor-pointer flex-row-reverse shadow-xs"
                 >
                   <Icon size={14} className={`${prompt.color} shrink-0 mt-0.5 group-hover:scale-110 transition-transform`} />
-                  <span className="font-semibold flex-1 text-right rtl:text-right ltr:text-left break-words pr-2 pl-2">{prompt.text}</span>
+                  <span className="font-bold flex-1 text-right rtl:text-right ltr:text-left break-words pr-2 pl-2 text-slate-800 dark:text-slate-200">{prompt.text}</span>
                 </button>
               );
             })}
@@ -311,12 +311,12 @@ export const AssistantView: React.FC = () => {
         </div>
 
         {/* Warning card */}
-        <div className="bg-amber-500/5 border border-amber-500/15 p-4 rounded-xl space-y-2 text-right rtl:text-right ltr:text-left">
-          <h5 className="text-xs font-bold text-amber-800 flex items-center gap-1.5 flex-row-reverse">
-            <Terminal size={14} className="shrink-0" />
+        <div className="bg-amber-500/5 dark:bg-amber-500/10 border border-amber-500/15 dark:border-amber-500/30 p-4 rounded-xl space-y-2 text-right rtl:text-right ltr:text-left">
+          <h5 className="text-xs font-black text-amber-800 dark:text-amber-400 flex items-center gap-1.5 flex-row-reverse">
+            <Terminal size={14} className="shrink-0 text-amber-550 dark:text-amber-400" />
             <span className="flex-1">{getRulesTitle()}</span>
           </h5>
-          <p className="text-[10px] text-slate-500 leading-relaxed">
+          <p className="text-[10px] text-slate-600 dark:text-slate-350 leading-relaxed font-semibold">
             {getRulesBody()}
           </p>
         </div>
